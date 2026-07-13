@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Garfield++ 多气体文件对比与绘图工具</title>
+<style>
+  :root {
+    --bg: #f4f7fb;
+    --panel: #ffffff;
+    --panel-soft: #f8fafc;
+    --text: #172033;
+    --muted: #627087;
+    --line: #dbe3ef;
+    --primary: #2459d3;
+    --primary-dark: #1844aa;
+    --success: #147a52;
+    --warning: #a15d00;
+    --danger: #b42318;
+    --shadow: 0 10px 28px rgba(29, 48, 84, 0.09);
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+    color: var(--text);
+    background: linear-gradient(180deg, #edf3ff 0, var(--bg) 240px);
+  }
+  header {
+    padding: 34px 24px 24px;
+    background: linear-gradient(125deg, #173d96, #2773d8 72%, #398ad9);
+    color: white;
+  }
+  .header-inner, main { max-width: 1500px; margin: 0 auto; }
+  h1 { margin: 0 0 8px; font-size: clamp(27px, 3vw, 40px); letter-spacing: .2px; }
+  .subtitle { margin: 0; opacity: .92; font-size: 15px; line-height: 1.7; max-width: 980px; }
+  main { padding: 22px 20px 48px; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid rgba(218, 228, 241, .9);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 18px;
+  }
+  .drop-zone {
+    min-height: 178px;
+    border: 2px dashed #8ba9e8;
+    border-radius: 14px;
+    background: #f6f9ff;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    cursor: pointer;
+    padding: 24px;
+    transition: .18s ease;
+  }
+  .drop-zone:hover, .drop-zone.dragover { border-color: var(--primary); background: #eef4ff; transform: translateY(-1px); }
+  .upload-icon { width: 54px; height: 54px; margin: 0 auto 8px; border-radius: 50%; display: grid; place-items: center; background: #dce8ff; color: var(--primary); font-size: 28px; font-weight: 700; }
+  .drop-zone strong { font-size: 18px; }
+  .drop-zone p { margin: 7px 0 0; color: var(--muted); line-height: 1.6; }
+  input[type=file] { display:none; }
+  .hidden { display:none !important; }
+  .status { margin-top: 12px; border-radius: 10px; padding: 11px 13px; line-height: 1.55; font-size: 14px; }
+  .status.info { background:#eef4ff; color:#23498f; }
+  .status.success { background:#eaf8f1; color:#116746; }
+  .status.warn { background:#fff5df; color:#835000; }
+  .status.error { background:#ffefed; color:#9b1c13; white-space: pre-wrap; }
+  .panel-title { margin:0 0 15px; font-size:19px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .meta-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:12px; }
+  .meta-card { background:var(--panel-soft); border:1px solid var(--line); border-radius:12px; padding:13px 14px; min-height:82px; }
+  .meta-label { color:var(--muted); font-size:12px; margin-bottom:7px; }
+  .meta-value { font-weight:650; font-size:15px; line-height:1.45; word-break:break-word; }
+  .controls { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; align-items:end; }
+  label.control { display:flex; flex-direction:column; gap:6px; color:var(--muted); font-size:12px; font-weight:600; }
+  select, button, input[type=number] {
+    width:100%; min-height:40px; border-radius:9px; border:1px solid #cbd6e7; background:white;
+    color:var(--text); padding:8px 10px; font:inherit;
+  }
+  select:focus, button:focus, input:focus { outline:2px solid rgba(36,89,211,.18); border-color:var(--primary); }
+  button { cursor:pointer; font-weight:650; transition:.15s ease; }
+  button.primary { background:var(--primary); color:white; border-color:var(--primary); }
+  button.primary:hover { background:var(--primary-dark); }
+  button.secondary:hover { background:#f2f6fd; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:9px; }
+  .toolbar button { width:auto; min-width:120px; }
+  .chart-wrap { position:relative; min-height:460px; border:1px solid var(--line); border-radius:12px; background:white; overflow:hidden; }
+  #chart { width:100%; height:460px; display:block; touch-action:none; user-select:none; }
+  #chart.mode-pan { cursor:grab; }
+  #chart.mode-pan.dragging { cursor:grabbing; }
+  #chart.mode-box { cursor:crosshair; }
+  .chart-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:14px 0 10px; }
+  .chart-toolbar button { width:auto; min-width:86px; min-height:36px; padding:7px 11px; }
+  .chart-toolbar select { width:auto; min-width:150px; min-height:36px; }
+  .chart-toolbar .zoom-help { color:var(--muted); font-size:12px; line-height:1.5; margin-left:3px; }
+  .legend-config, .export-config {
+    margin: 12px 0 10px; padding: 12px 14px; border:1px solid var(--line); border-radius:12px; background:#fbfcff;
+  }
+  .legend-config-title, .export-config-title { font-size:13px; font-weight:700; color:#33425d; margin-bottom:8px; }
+  .option-row { display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; }
+  .option-check { display:inline-flex; align-items:center; gap:7px; color:#405068; font-size:13px; }
+  .option-check input { width:16px; height:16px; margin:0; }
+  .export-controls { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, max-content)); gap:10px 12px; align-items:end; }
+  .export-controls .control-inline { display:flex; flex-direction:column; gap:6px; color:var(--muted); font-size:12px; font-weight:600; }
+  .export-controls button { width:auto; min-width:130px; }
+  .tooltip {
+    position:absolute; pointer-events:none; background:rgba(21,31,51,.94); color:white;
+    border-radius:8px; padding:8px 10px; font-size:12px; line-height:1.55; transform:translate(-50%,-115%);
+    box-shadow:0 6px 18px rgba(0,0,0,.24); white-space:nowrap;
+  }
+  .chart-note { color:var(--muted); font-size:12px; line-height:1.6; margin-top:9px; }
+  .table-wrap { overflow:auto; max-height:570px; border:1px solid var(--line); border-radius:12px; }
+  table { border-collapse:separate; border-spacing:0; width:100%; min-width:1380px; font-size:12px; }
+  th, td { border-bottom:1px solid #e4eaf3; border-right:1px solid #eef2f7; padding:8px 9px; text-align:right; white-space:nowrap; }
+  th { position:sticky; top:0; z-index:2; background:#eef3fb; color:#33425d; font-weight:700; }
+  th:first-child, td:first-child { position:sticky; left:0; z-index:1; background:#fff; text-align:center; }
+  th:first-child { z-index:3; background:#eef3fb; }
+  tr:hover td { background:#f7faff; }
+  tr:hover td:first-child { background:#f7faff; }
+  .chips { display:flex; flex-wrap:wrap; gap:7px; }
+  .chip { border:1px solid #cdd9e9; background:#f6f8fc; border-radius:999px; padding:5px 9px; color:#45536b; font-size:12px; }
+  .chip.on { border-color:#a6d7c2; background:#eaf8f1; color:#126647; }
+  .chip.off { opacity:.52; }
+  details { border:1px solid var(--line); border-radius:11px; background:#fbfcfe; padding:11px 13px; margin-top:10px; }
+  summary { cursor:pointer; font-weight:700; }
+  .levels-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:10px; margin-top:12px; max-height:430px; overflow:auto; }
+  .level { border:1px solid #e0e7f1; border-radius:9px; padding:9px 10px; background:white; }
+  .level-title { font-size:12px; font-weight:650; line-height:1.45; }
+  .level-meta { color:var(--muted); font-size:11px; margin-top:4px; }
+  .footnote { color:var(--muted); font-size:12px; line-height:1.75; }
+  .two-col { display:grid; grid-template-columns:minmax(0, 2fr) minmax(270px, 1fr); gap:18px; }
+  .side-list { margin:0; padding-left:19px; color:var(--muted); line-height:1.8; font-size:13px; }
+  .formula { font-family:"Cambria Math", Georgia, serif; font-size:15px; color:#273a61; background:#f4f7fd; border-radius:8px; padding:8px 10px; margin-top:8px; }
+
+  .file-list { display:grid; gap:9px; }
+  .file-row { display:grid; grid-template-columns:auto minmax(180px,1fr) minmax(160px,auto) auto; gap:10px; align-items:center; padding:10px 12px; border:1px solid var(--line); border-radius:11px; background:var(--panel-soft); }
+  .file-row.active { border-color:#8cacee; box-shadow:0 0 0 2px rgba(36,89,211,.08); background:#f4f8ff; }
+  .file-main { min-width:0; }
+  .file-name { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .file-sub { color:var(--muted); font-size:11px; margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .file-actions { display:flex; flex-wrap:wrap; gap:7px; justify-content:flex-end; }
+  .file-actions button { width:auto; min-height:34px; padding:6px 10px; }
+  .move-buttons { display:flex; gap:7px; }
+  .move-buttons button { min-width:56px; }
+  .file-style-row { display:flex; flex-wrap:wrap; gap:8px 10px; margin-top:6px; align-items:center; }
+  .file-style-row label { display:flex; align-items:center; gap:6px; color:var(--muted); font-size:12px; }
+  .file-style-row select { width:auto; min-width:96px; min-height:32px; padding:5px 8px; }
+  .chart-display { display:grid; gap:12px; align-items:start; position:relative; }
+  .chart-display.legend-top { grid-template-columns:1fr; }
+  .chart-display.legend-bottom { grid-template-columns:1fr; }
+  .chart-display.legend-left { grid-template-columns:minmax(220px, 320px) minmax(0, 1fr); }
+  .chart-display.legend-right { grid-template-columns:minmax(0, 1fr) minmax(220px, 320px); }
+  .chart-display.legend-top #chartLegend { order:-1; }
+  .chart-display.legend-left #chartLegend { order:0; }
+  .chart-display.legend-right #chartLegend { order:2; }
+  .chart-display.legend-right .chart-wrap { order:1; }
+  .chart-display.legend-left .chart-wrap { order:2; }
+  .chart-display.legend-inside { grid-template-columns:1fr; }
+  .chart-display.legend-inside #chartLegend {
+    position:absolute; top:18px; right:18px; z-index:4; max-width:min(38%, 430px);
+    padding:10px 12px; border-radius:12px; background:rgba(255,255,255,.9); border:1px solid rgba(203,214,231,.95);
+    box-shadow:0 8px 24px rgba(25,44,74,.12); backdrop-filter:blur(4px);
+  }
+  .chart-display.legend-inside .chart-wrap { position:relative; }
+  .curve-toggle { display:flex; align-items:center; gap:8px; min-width:0; }
+  .curve-toggle input { width:16px; height:16px; }
+  .swatch { width:13px; height:13px; border-radius:50%; flex:0 0 auto; border:2px solid rgba(255,255,255,.9); box-shadow:0 0 0 1px rgba(0,0,0,.18); }
+  .chart-legend { display:flex; flex-wrap:wrap; gap:8px 15px; padding:11px 4px 1px; min-height:30px; }
+  .legend-item { display:flex; align-items:center; gap:7px; font-size:12px; color:#3e4c64; max-width:360px; }
+  .legend-item span:last-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .panel-title-tools { display:flex; gap:9px; align-items:center; flex-wrap:wrap; }
+  .panel-title-tools select { min-width:260px; width:auto; }
+  .small-note { color:var(--muted); font-size:12px; line-height:1.6; }
+  @media(max-width:760px){ .file-row{grid-template-columns:auto minmax(0,1fr);}.file-row .file-meta,.file-row .file-actions{grid-column:2;} .panel-title-tools select{min-width:180px;width:100%;} }
+
+  @media(max-width:900px){ .two-col{grid-template-columns:1fr;} #chart{height:390px;} .chart-wrap{min-height:390px;} .chart-display.legend-left,.chart-display.legend-right{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <h1>Garfield++ 多气体文件对比与绘图工具</h1>
+    <p class="subtitle">批量读取 Garfield / Garfield++ / Magboltz 生成的 ASCII <code>.gas</code> 文件，将多个气体文件的输运参数叠加到同一张图中进行比较。所有计算均在本地浏览器中完成，文件不会上传。</p>
+  </div>
+</header>
+<main>
+  <section class="panel">
+    <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="选择多个 Garfield gas 文件">
+      <div>
+        <div class="upload-icon">↑</div>
+        <strong>拖入一个或多个 .gas 文件，或点击批量选择</strong>
+        <p>支持一次选择多个文件、曲线显隐、同图图例、双对数坐标，以及滚轮缩放、拖拽平移和框选放大。</p>
+      </div>
+    </div>
+    <input id="fileInput" type="file" accept=".gas,.txt,text/plain" multiple />
+    <div id="status" class="status info">请选择一个或多个气体文件。后续再次选择文件时会继续追加到当前比较列表。</div>
+  </section>
+
+  <div id="results" class="hidden">
+    <section class="panel">
+      <h2 class="panel-title">
+        <span>已载入的气体文件</span>
+        <span class="toolbar">
+          <button id="addFiles" class="primary">继续添加文件</button>
+          <button id="clearFiles" class="secondary">清空全部</button>
+        </span>
+      </h2>
+      <div id="fileList" class="file-list"></div>
+      <div class="small-note" style="margin-top:10px">勾选决定该文件是否显示在比较曲线中；“设为当前”决定参数表、通道信息以及目标磁场/夹角控件所依据的文件；“上移/下移”可改变文件排序，从而控制作图时的图例顺序与曲线顺序。</div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">
+        <span>当前文件与气体信息</span>
+        <span class="panel-title-tools"><select id="activeGasSelect" aria-label="当前文件"></select></span>
+      </h2>
+      <div id="metaGrid" class="meta-grid"></div>
+      <details>
+        <summary>GASOK 参数可用性</summary>
+        <div id="gasBits" class="chips" style="margin-top:12px"></div>
+      </details>
+      <details>
+        <summary>气体组分原始数组</summary>
+        <div id="mixtureInfo" class="footnote" style="margin-top:10px"></div>
+      </details>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">曲线设置</h2>
+      <div class="controls">
+        <label class="control">横坐标
+          <select id="xSelect">
+            <option value="E">电场 E [V/cm]</option>
+            <option value="EoverP">约化电场 E/p [V/(cm·Torr)]</option>
+            <option value="EoverN">约化电场 E/N [Td]</option>
+          </select>
+        </label>
+        <label class="control">横轴尺度
+          <select id="xScaleSelect">
+            <option value="linear">线性</option>
+            <option value="log">对数（仅正值）</option>
+          </select>
+        </label>
+        <label class="control">纵坐标参数
+          <select id="ySelect"></select>
+        </label>
+        <label class="control">纵轴尺度
+          <select id="yScaleSelect">
+            <option value="linear">线性</option>
+            <option value="log">对数（仅正值）</option>
+          </select>
+        </label>
+        <label id="angleControl" class="control">E–B 夹角
+          <select id="angleSelect"></select>
+        </label>
+        <label id="bControl" class="control">磁场 B
+          <select id="bSelect"></select>
+        </label>
+      </div>
+      <div class="legend-config" aria-label="图例显示设置">
+        <div class="legend-config-title">图例展示方式</div>
+        <div class="option-row">
+          <label class="option-check"><input id="legendFileName" type="checkbox" checked>文件名</label>
+          <label class="option-check"><input id="legendComposition" type="checkbox">气体成分及比例</label>
+          <label class="option-check"><input id="legendTemperature" type="checkbox">温度</label>
+          <label class="option-check"><input id="legendPressure" type="checkbox">压强</label>
+          <label class="control-inline" style="min-width:190px; margin-left:8px;">
+            图例位置
+            <select id="legendPosition">
+              <option value="bottom">下方</option>
+              <option value="top">上方</option>
+              <option value="left">左侧</option>
+              <option value="right">右侧</option>
+              <option value="inside">图内右上角</option>
+            </select>
+          </label>
+        </div>
+        <div class="small-note" style="margin-top:8px">可勾选一种或多种信息作为图例内容；若全部取消，系统会自动回退为显示文件名；图例位置也可自由切换。</div>
+      </div>
+      <div class="chart-toolbar" aria-label="图表缩放工具">
+        <select id="interactionMode" title="选择鼠标拖拽方式">
+          <option value="pan">拖拽平移</option>
+          <option value="box">框选放大</option>
+        </select>
+        <button id="zoomIn" class="secondary" title="同时放大横轴和纵轴">放大</button>
+        <button id="zoomOut" class="secondary" title="同时缩小横轴和纵轴">缩小</button>
+        <button id="zoomXIn" class="secondary" title="只放大横轴范围">X 轴放大</button>
+        <button id="zoomYIn" class="secondary" title="只放大纵轴范围">Y 轴放大</button>
+        <button id="resetZoom" class="primary" title="恢复完整数据范围">复位视图</button>
+        <span class="zoom-help">滚轮：以指针为中心缩放；Shift+滚轮仅缩放 X 轴；Alt+滚轮仅缩放 Y 轴；双击图表复位。</span>
+      </div>
+      <div id="chartDisplay" class="chart-display legend-bottom">
+        <div class="chart-wrap">
+          <svg id="chart" class="mode-pan" viewBox="0 0 1200 460" preserveAspectRatio="none" aria-label="数据曲线"></svg>
+          <div id="tooltip" class="tooltip hidden"></div>
+        </div>
+        <div id="chartLegend" class="chart-legend"></div>
+      </div>
+      <div id="chartNote" class="chart-note"></div>
+      <div class="export-config" aria-label="图片保存设置">
+        <div class="export-config-title">图片保存</div>
+        <div class="export-controls">
+          <label class="control-inline">导出格式
+            <select id="exportImageFormat">
+              <option value="png">PNG</option>
+              <option value="svg">SVG</option>
+            </select>
+          </label>
+          <label class="control-inline">图片宽度（px）
+            <input id="exportImageWidth" type="number" min="400" step="100" value="1600" />
+          </label>
+          <label class="control-inline">图片高度（px）
+            <input id="exportImageHeight" type="number" min="300" step="100" value="900" />
+          </label>
+          <label class="control-inline">导出内容
+            <select id="exportImageContent">
+              <option value="all">图 + 图例 + 说明</option>
+              <option value="chart">仅图像坐标区</option>
+            </select>
+          </label>
+          <div class="control-inline">
+            <span>下载当前图</span>
+            <button id="exportChartImage" class="primary">保存图片</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">
+        <span>主要输运参数表</span>
+        <span class="toolbar">
+          <button id="exportCsv" class="primary">导出对比切片 CSV</button>
+          <button id="exportJson" class="secondary">导出全部解析 JSON</button>
+        </span>
+      </h2>
+      <div class="table-wrap"><table id="dataTable"></table></div>
+    </section>
+
+    <section class="panel two-col">
+      <div>
+        <h2 class="panel-title">激发与电离通道</h2>
+        <label class="control" style="max-width:360px">查看速率所对应的电场点
+          <select id="rateFieldSelect"></select>
+        </label>
+        <details open>
+          <summary>激发通道 <span id="excCount"></span></summary>
+          <div id="excLevels" class="levels-grid"></div>
+        </details>
+        <details>
+          <summary>电离通道 <span id="ionCount"></span></summary>
+          <div id="ionLevels" class="levels-grid"></div>
+        </details>
+      </div>
+      <aside>
+        <h2 class="panel-title">换算说明</h2>
+        <ul class="side-list">
+          <li>文件中的电场网格按 <b>E/p</b> 保存，网页用页脚的 <b>PGAS</b> 还原 E。</li>
+          <li>漂移速度从 cm/μs 换算为 Garfield++ 常用的 cm/ns。</li>
+          <li>纵向/横向扩散参数按文件格式除以 √p，显示为 √cm，同时给出 μm/√cm。</li>
+          <li>Townsend 与吸附系数在文件中以对数约化形式保存。</li>
+        </ul>
+        <div class="formula">α = p · exp(log(α/p))</div>
+        <div class="formula">η = p · exp(log(η/p))</div>
+        <div class="formula">α<sub>eff</sub> = α − η</div>
+        <p class="footnote">提示：表中的 −30 常作为对数下限/近零占位值；换算后会得到极小的正数，应视为接近零。α<sub>0</sub> 表示气体文件中保存的无 Penning 修正 Townsend 系数（若生成流程提供该量）。</p>
+      </aside>
+    </section>
+  </div>
+</main>
+<script>
+(() => {
+  'use strict';
+
+  const FLOAT_RE = /[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+))(?:[EeDd][+-]?\d+)?/g;
+  const GAS_BITS = [
+    '电子漂移速度（沿 E）','离子迁移率','电子纵向扩散','Townsend 系数','簇大小分布',
+    '电子吸附系数','Lorentz 角','电子横向扩散','电子漂移速度（沿 B⊥）','电子漂移速度（沿 E×B）',
+    '电子扩散张量','离子解离','SRIM 数据','Heed 数据','激发速率','电离速率',
+    '扩展参数 17','扩展参数 18','扩展参数 19','扩展参数 20'
+  ];
+
+  const $ = id => document.getElementById(id);
+  const state = {
+    gases: [], activeIndex: 0, nextId: 1,
+    chartView: null, chartBaseView: null, chartSignature: '', chartGeometry: null,
+    chartDrag: null, selectionRect: null
+  };
+  const PALETTE = ['#2459d3','#d04a3a','#16836a','#8a4fb5','#d17a00','#1877a8','#b52f73','#667085','#3d8b37','#9b5b2e','#4e6bdc','#c13f91'];
+  const activeEntry = () => state.gases[state.activeIndex] || null;
+  const activeGas = () => activeEntry()?.gas || null;
+  const MAGBOLTZ_GAS_NAMES = {
+    1:'CF4',2:'Ar',3:'He',4:'He-3',5:'Ne',6:'Kr',7:'Xe',8:'CH4',9:'C2H6',10:'C3H8',
+    11:'i-C4H10',12:'CO2',13:'Neo-pentane',14:'H2O',15:'O2',16:'N2',17:'NO',18:'N2O',
+    19:'C2H4',20:'C2H2',21:'H2',22:'D2',23:'CO',24:'Methylal',25:'DME',26:'Reid step',
+    27:'NH3',28:'C2H5OH',29:'C3H7OH',30:'Cs',31:'F2',32:'CS2',33:'COS',34:'CD4',35:'BF3',
+    36:'C2F4H2',37:'Mg',38:'C3F8',39:'C2HF5',40:'SF6',41:'C2H2F4',42:'C2F6',43:'CHF3',44:'CF3Br',
+    45:'C3H2F4',46:'O3',47:'Hg',48:'H2S',49:'n-C4H10',50:'CH3OH'
+  };
+
+  const LINE_STYLE_OPTIONS = [
+    {key:'solid', label:'实线', dash:''},
+    {key:'dashed', label:'虚线', dash:'10 7'},
+    {key:'dotted', label:'点线', dash:'3 7'},
+    {key:'dashdot', label:'点划线', dash:'12 6 3 6'}
+  ];
+  const MARKER_STYLE_OPTIONS = [
+    {key:'circle', label:'圆点'},
+    {key:'square', label:'方块'},
+    {key:'diamond', label:'菱形'},
+    {key:'triangle', label:'三角'},
+    {key:'cross', label:'叉号'},
+    {key:'plus', label:'加号'},
+    {key:'none', label:'无点'}
+  ];
+
+  function nums(text) {
+    const matches = text.match(FLOAT_RE) || [];
+    return matches.map(s => Number(s.replace(/[Dd]/, 'E')));
+  }
+
+  function firstMatch(text, regex, fallback = '') {
+    const m = text.match(regex);
+    return m ? m[1].trim() : fallback;
+  }
+
+  function extractSection(text, startRegex, endRegex) {
+    const sm = startRegex.exec(text);
+    if (!sm) return '';
+    const start = sm.index + sm[0].length;
+    const rest = text.slice(start);
+    const em = endRegex.exec(rest);
+    return em ? rest.slice(0, em.index) : rest;
+  }
+
+  function parseLevels(header, kind) {
+    const re = kind === 'exc'
+      ? /^\s*Excitation\s+(\d+)\s*:\s*"([^"]*)"\s*(.*)$/gmi
+      : /^\s*Ionisation\s+(\d+)\s*:\s*"([^"]*)"\s*(.*)$/gmi;
+    const out = [];
+    let m;
+    while ((m = re.exec(header)) !== null) {
+      const values = nums(m[3]);
+      if (kind === 'exc') {
+        out.push({ index:+m[1], label:m[2].trim(), energy:values[0] ?? NaN, penningProbability:values[1] ?? 0, penningRms:values[2] ?? 0, decayTime:values[3] ?? 0 });
+      } else {
+        out.push({ index:+m[1], label:m[2].trim(), energy:values[0] ?? NaN });
+      }
+    }
+    return out;
+  }
+
+  function parseGasFile(text, fileName) {
+    const marker = /\s*The gas tables follow:\s*/i.exec(text);
+    if (!marker) throw new Error('未找到 “The gas tables follow:” 标记，文件可能不是 Garfield ASCII gas 文件。');
+    const header = text.slice(0, marker.index);
+    const footerStart = text.search(/^\s*H\s+Extr\s*:/mi);
+    if (footerStart < 0) throw new Error('未找到 “H Extr:” 页脚，无法确定气体表数据结束位置。');
+    const tableText = text.slice(marker.index + marker[0].length, footerStart);
+    const footer = text.slice(footerStart);
+
+    const version = Number(firstMatch(header, /Version\s*:\s*(\d+)/i, '0'));
+    const gasBits = firstMatch(header, /GASOK\s+bits\s*:\s*([TF]+)/i, '');
+    const identifier = firstMatch(header, /Identifier\s*:\s*([^\r\n]*)/i, '未提供');
+    const dim = header.match(/Dimension\s*:\s*([TF])\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/i);
+    if (!dim) throw new Error('无法解析 Dimension 行。');
+    const map2d = dim[1].toUpperCase() === 'T';
+    const nE = +dim[2], nAngles = +dim[3], nB = +dim[4], nExc = +dim[5], nIon = +dim[6];
+    if (!nE || !nAngles || !nB) throw new Error(`非法网格尺寸：E=${nE}, angle=${nAngles}, B=${nB}`);
+
+    const eSec = extractSection(header, /E\s+fields\s*/ig, /E-B\s+angles/ig);
+    const aSec = extractSection(header, /E-B\s+angles\s*/ig, /B\s+fields/ig);
+    const bSec = extractSection(header, /B\s+fields\s*/ig, /Mixture\s*:/ig);
+    const mixSec = extractSection(header, /Mixture\s*:\s*/ig, /(?:^\s*Excitation\s+\d+\s*:|^\s*Ionisation\s+\d+\s*:|The gas tables follow:)/gmi);
+    const eOverP = nums(eSec).slice(0, nE);
+    const angles = nums(aSec).slice(0, nAngles);
+    const bRaw = nums(bSec).slice(0, nB);
+    const mixture = nums(mixSec).slice(0, 60);
+    if (eOverP.length !== nE || angles.length !== nAngles || bRaw.length !== nB) {
+      throw new Error(`网格读取不完整：E ${eOverP.length}/${nE}, angle ${angles.length}/${nAngles}, B ${bRaw.length}/${nB}`);
+    }
+
+    const pressure = Number(firstMatch(footer, /PGAS\s*=\s*([+\-\d.EeDd]+)/i, '760').replace(/[Dd]/,'E'));
+    const temperature = Number(firstMatch(footer, /TGAS\s*=\s*([+\-\d.EeDd]+)/i, '293.15').replace(/[Dd]/,'E'));
+    const pressurePa = pressure * 133.32236842105263;
+    const numberDensity = pressurePa / (1.380649e-23 * temperature);
+
+    const excitationLevels = parseLevels(header, 'exc');
+    const ionisationLevels = parseLevels(header, 'ion');
+    const nExcTable = nExc;
+    const nIonTable = nIon;
+
+    const values = nums(tableText);
+    const recordSize = map2d ? (17 + nExcTable + nIonTable) : (33 + 2 * (nExcTable + nIonTable));
+    const recordCount = nE * nAngles * nB;
+    const expected = recordSize * recordCount;
+    if (values.length < expected) throw new Error(`气体表数值不足：读取 ${values.length}，按 Dimension 预计至少 ${expected}。`);
+    const extraValues = values.length - expected;
+
+    const records = [];
+    let q = 0;
+    const take = () => values[q++];
+    const takePair = () => ({ value:take(), error:take() });
+
+    for (let ie = 0; ie < nE; ie++) {
+      for (let ia = 0; ia < nAngles; ia++) {
+        for (let ib = 0; ib < nB; ib++) {
+          let raw;
+          if (map2d) {
+            raw = {
+              ve:take(), vb:take(), vexb:take(), dl:take(), dt:take(), alpha:take(), alpha0:take(), eta:take(),
+              mu:take(), lorentz:take(), dissociation:take(), tensor:Array.from({length:6}, take),
+              excitationRates:Array.from({length:nExcTable}, take), ionisationRates:Array.from({length:nIonTable}, take), errors:null
+            };
+          } else {
+            const ve=takePair(), vb=takePair(), vexb=takePair(), dl=takePair(), dt=takePair();
+            const alpha=takePair();
+            const alpha0=take();
+            const eta=takePair();
+            const mu=takePair(), lorentz=takePair(), dissociation=takePair();
+            const tensorPairs=Array.from({length:6}, takePair);
+            const excPairs=Array.from({length:nExcTable}, takePair);
+            const ionPairs=Array.from({length:nIonTable}, takePair);
+            raw = {
+              ve:ve.value, vb:vb.value, vexb:vexb.value, dl:dl.value, dt:dt.value,
+              alpha:alpha.value, alpha0, eta:eta.value, mu:mu.value, lorentz:lorentz.value, dissociation:dissociation.value,
+              tensor:tensorPairs.map(x=>x.value), excitationRates:excPairs.map(x=>x.value), ionisationRates:ionPairs.map(x=>x.value),
+              errors:{ve:ve.error,vb:vb.error,vexb:vexb.error,dl:dl.error,dt:dt.error,alpha:alpha.error,eta:eta.error,mu:mu.error,lorentz:lorentz.error,dissociation:dissociation.error,tensor:tensorPairs.map(x=>x.error),excitationRates:excPairs.map(x=>x.error),ionisationRates:ionPairs.map(x=>x.error)}
+            };
+          }
+
+          const e = eOverP[ie] * pressure;
+          const eOverN = (e * 100 / numberDensity) / 1e-21;
+          const safeExp = x => x < -745 ? 0 : Math.exp(x);
+          const alphaReduced = safeExp(raw.alpha);
+          const alpha0Reduced = safeExp(raw.alpha0);
+          const etaReduced = safeExp(raw.eta);
+          const alpha = pressure * alphaReduced;
+          const alpha0 = pressure * alpha0Reduced;
+          const eta = pressure * etaReduced;
+          const sqrtP = Math.sqrt(pressure);
+          const dl = raw.dl / sqrtP;
+          const dt = raw.dt / sqrtP;
+          const converted = {
+            EoverP:eOverP[ie], E:e, EoverN:eOverN,
+            angleRad:angles[ia], angleDeg:angles[ia]*180/Math.PI,
+            Braw:bRaw[ib], BTesla:bRaw[ib]/100,
+            veCmUs:raw.ve, veCmNs:raw.ve*1e-3,
+            vbCmUs:raw.vb, vbCmNs:raw.vb*1e-3,
+            vexbCmUs:raw.vexb, vexbCmNs:raw.vexb*1e-3,
+            dlSqrtCm:dl, dtSqrtCm:dt, dlUmSqrtCm:dl*1e4, dtUmSqrtCm:dt*1e4,
+            alpha, alpha0, eta, alphaEff:alpha-eta,
+            alphaReduced, alpha0Reduced, etaReduced, alphaEffReduced:alphaReduced-etaReduced,
+            ionMobilityCm2VNs:raw.mu*1e-3,
+            ionMobilityCm2Vs:raw.mu*1e6,
+            lorentz:raw.lorentz,
+            ionDissociation:pressure*safeExp(raw.dissociation),
+            tensor:raw.tensor.map(v=>v/pressure),
+            excitationTotal:raw.excitationRates.reduce((a,b)=>a+b,0),
+            ionisationTotal:raw.ionisationRates.reduce((a,b)=>a+b,0)
+          };
+          records.push({ ie, ia, ib, raw, ...converted });
+        }
+      }
+    }
+
+    const extraActiveBits = gasBits.slice(16).split('').map((v,i)=>v==='T'?i+17:null).filter(Boolean);
+    return {
+      fileName, version, gasBits, identifier, map2d, nE, nAngles, nB, nExc, nIon,
+      pressure, temperature, numberDensity, eOverP, angles, bRaw, mixture,
+      excitationLevels, ionisationLevels, records, recordSize, expectedValues:expected,
+      parsedValues:values.length, extraValues, extraActiveBits
+    };
+  }
+
+  const parameters = [
+    {group:'漂移速度', key:'veCmNs', label:'电子漂移速度 vE [cm/ns]', bit:0, positive:true},
+    {group:'漂移速度', key:'veCmUs', label:'电子漂移速度 vE [cm/μs]', bit:0, positive:true},
+    {group:'漂移速度', key:'vbCmNs', label:'电子漂移速度 vB⊥ [cm/ns]', bit:8},
+    {group:'漂移速度', key:'vexbCmNs', label:'电子漂移速度 vE×B [cm/ns]', bit:9},
+    {group:'扩散', key:'dlUmSqrtCm', label:'纵向扩散 DL [μm/√cm]', bit:2, positive:true},
+    {group:'扩散', key:'dtUmSqrtCm', label:'横向扩散 DT [μm/√cm]', bit:7, positive:true},
+    {group:'扩散', key:'dlSqrtCm', label:'纵向扩散 DL [√cm]', bit:2, positive:true},
+    {group:'扩散', key:'dtSqrtCm', label:'横向扩散 DT [√cm]', bit:7, positive:true},
+    {group:'倍增与吸附', key:'alpha', label:'Townsend 系数 α [cm⁻¹]', bit:3, positive:true},
+    {group:'倍增与吸附', key:'alpha0', label:'无 Penning Townsend 系数 α₀ [cm⁻¹]', bit:3, positive:true},
+    {group:'倍增与吸附', key:'eta', label:'吸附系数 η [cm⁻¹]', bit:5, positive:true},
+    {group:'倍增与吸附', key:'alphaEff', label:'有效 Townsend 系数 αeff=α−η [cm⁻¹]'},
+    {group:'约化系数', key:'alphaReduced', label:'约化 Townsend 系数 α/p [cm⁻¹ Torr⁻¹]', bit:3, positive:true},
+    {group:'约化系数', key:'etaReduced', label:'约化吸附系数 η/p [cm⁻¹ Torr⁻¹]', bit:5, positive:true},
+    {group:'约化系数', key:'alphaEffReduced', label:'约化有效 Townsend 系数 (α−η)/p'},
+    {group:'其它', key:'lorentz', label:'Lorentz 角（文件原始单位）', bit:6},
+    {group:'其它', key:'ionMobilityCm2Vs', label:'离子迁移率 [cm²/(V·s)]', bit:1, positive:true},
+    {group:'其它', key:'ionDissociation', label:'离子解离系数 [cm⁻¹]', bit:11, positive:true},
+    {group:'碰撞速率', key:'excitationTotal', label:'总激发速率（文件单位）', bit:14, positive:true},
+    {group:'碰撞速率', key:'ionisationTotal', label:'总电离速率（文件单位）', bit:15, positive:true},
+    ...Array.from({length:6},(_,i)=>({group:'扩散张量',key:`tensor.${i}`,label:`扩散张量分量 ${i+1}（Garfield 缩放）`,bit:10}))
+  ];
+
+  function getValue(rec, key) {
+    if (key.startsWith('tensor.')) return rec.tensor[+key.split('.')[1]];
+    if (key.startsWith('exc.')) return rec.raw.excitationRates[+key.split('.')[1]];
+    if (key.startsWith('ion.')) return rec.raw.ionisationRates[+key.split('.')[1]];
+    return rec[key];
+  }
+
+  function formatNumber(x, digits=6) {
+    if (!Number.isFinite(x)) return '—';
+    if (x === 0) return '0';
+    const a = Math.abs(x);
+    if (a >= 1e5 || a < 1e-4) return x.toExponential(5);
+    return x.toLocaleString('en-US',{maximumSignificantDigits:digits,useGrouping:false});
+  }
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function gasAvailable(gas, bit) { return gas?.gasBits?.[bit] === 'T'; }
+  function anyAvailable(bit) { return state.gases.some(e=>gasAvailable(e.gas,bit)); }
+  function nearestIndex(values, target) {
+    if (!values?.length) return 0;
+    let best=0, dist=Infinity;
+    values.forEach((v,i)=>{const d=Math.abs(v-target); if(d<dist){dist=d;best=i;}});
+    return best;
+  }
+
+  function populateParameterSelect() {
+    const gas=activeGas(); if(!gas) return;
+    const select=$('ySelect'); const previous=select.value;
+    select.innerHTML='';
+    const enabled = p => p.bit === undefined || anyAvailable(p.bit);
+    const grouped=new Map();
+    parameters.filter(enabled).forEach(p=>{if(!grouped.has(p.group))grouped.set(p.group,[]);grouped.get(p.group).push(p);});
+    if (anyAvailable(14)) gas.excitationLevels.forEach((l,i)=>{
+      const g='当前文件：单个激发通道'; if(!grouped.has(g)) grouped.set(g,[]);
+      grouped.get(g).push({key:`exc.${i}`,label:`激发 ${i+1}: ${l.label}`,group:g,positive:true});
+    });
+    if (anyAvailable(15)) gas.ionisationLevels.forEach((l,i)=>{
+      const g='当前文件：单个电离通道'; if(!grouped.has(g)) grouped.set(g,[]);
+      grouped.get(g).push({key:`ion.${i}`,label:`电离 ${i+1}: ${l.label}`,group:g,positive:true});
+    });
+    for (const [group,items] of grouped) {
+      const optgroup=document.createElement('optgroup'); optgroup.label=group;
+      items.forEach(p=>{const o=document.createElement('option');o.value=p.key;o.textContent=p.label;optgroup.appendChild(o);});
+      select.appendChild(optgroup);
+    }
+    const options=[...select.options].map(o=>o.value);
+    if(options.includes(previous)) select.value=previous;
+    else if(options.includes('alphaEff')) select.value='alphaEff';
+  }
+
+  function targetSliceValues() {
+    const g=activeGas();
+    if(!g) return {angle:0,bRaw:0};
+    const ia=Math.min(+$('angleSelect').value||0,g.angles.length-1);
+    const ib=Math.min(+$('bSelect').value||0,g.bRaw.length-1);
+    return {angle:g.angles[ia]??0,bRaw:g.bRaw[ib]??0};
+  }
+
+  function currentSlice(gas=activeGas()) {
+    if(!gas) return [];
+    const target=targetSliceValues();
+    const ia=nearestIndex(gas.angles,target.angle), ib=nearestIndex(gas.bRaw,target.bRaw);
+    return gas.records.filter(r=>r.ia===ia&&r.ib===ib).sort((a,b)=>a.ie-b.ie);
+  }
+
+  function xInfo(rec) {
+    const key=$('xSelect').value;
+    const map={E:['E','E [V/cm]'],EoverP:['EoverP','E/p [V/(cm·Torr)]'],EoverN:['EoverN','E/N [Td]']};
+    return {key:map[key][0],label:map[key][1],value:rec[map[key][0]]};
+  }
+
+  function paramInfo() {
+    const key=$('ySelect').value;
+    const all=[...parameters]; const gas=activeGas();
+    gas?.excitationLevels.forEach((l,i)=>all.push({key:`exc.${i}`,label:`激发 ${i+1}: ${l.label}`,positive:true}));
+    gas?.ionisationLevels.forEach((l,i)=>all.push({key:`ion.${i}`,label:`电离 ${i+1}: ${l.label}`,positive:true}));
+    return all.find(p=>p.key===key)||{key,label:key};
+  }
+
+  function selectedLegendParts() {
+    const ids=['legendFileName','legendComposition','legendTemperature','legendPressure'];
+    return ids.filter(id=>$(id)?.checked);
+  }
+
+  function mixtureLabel(gas) {
+    const identifier=(gas.identifier||'').trim();
+    if(identifier && identifier!=='未提供') return identifier;
+    const parts=(gas.mixture||[])
+      .map((v,i)=>({v,i:i+1,name:MAGBOLTZ_GAS_NAMES[i+1]||`Gas#${i+1}`}))
+      .filter(x=>Number.isFinite(x.v) && Math.abs(x.v)>1e-12)
+      .map(x=>`${x.name} ${formatNumber(x.v,6)}%`);
+    return parts.length ? parts.join(' / ') : '未提供组分';
+  }
+
+  function buildLegendLabel(entry) {
+    const gas=entry.gas;
+    const ids=selectedLegendParts();
+    const fields=ids.length?ids:['legendFileName'];
+    const out=[];
+    if(fields.includes('legendFileName')) out.push(gas.fileName);
+    if(fields.includes('legendComposition')) out.push(mixtureLabel(gas));
+    if(fields.includes('legendTemperature')) out.push(`${formatNumber(gas.temperature,6)} K (${formatNumber(gas.temperature-273.15,5)} °C)`);
+    if(fields.includes('legendPressure')) out.push(`${formatNumber(gas.pressure,6)} Torr (${formatNumber(gas.pressure/760,6)} atm)`);
+    return out.join(' ｜ ');
+  }
+
+  function lineStyleMeta(key) {
+    return LINE_STYLE_OPTIONS.find(x=>x.key===key) || LINE_STYLE_OPTIONS[0];
+  }
+
+  function applyLegendPosition() {
+    const box=$('chartDisplay');
+    if(!box) return;
+    const pos=$('legendPosition')?.value || 'bottom';
+    box.className=`chart-display legend-${pos}`;
+  }
+
+  function markerShapeGeometry(style, cx, cy, color) {
+    const s=6;
+    switch(style){
+      case 'square': return {tag:'rect', attrs:{x:cx-s,y:cy-s,width:2*s,height:2*s,fill:'#fff',stroke:color,'stroke-width':2.2}};
+      case 'diamond': return {tag:'polygon', attrs:{points:`${cx},${cy-s-1} ${cx+s+1},${cy} ${cx},${cy+s+1} ${cx-s-1},${cy}`,fill:'#fff',stroke:color,'stroke-width':2.2}};
+      case 'triangle': return {tag:'polygon', attrs:{points:`${cx},${cy-s-1} ${cx+s+1},${cy+s} ${cx-s-1},${cy+s}`,fill:'#fff',stroke:color,'stroke-width':2.2}};
+      case 'cross': return {tag:'path', attrs:{d:`M ${cx-s} ${cy-s} L ${cx+s} ${cy+s} M ${cx+s} ${cy-s} L ${cx-s} ${cy+s}`,fill:'none',stroke:color,'stroke-width':2.4,'stroke-linecap':'round'}};
+      case 'plus': return {tag:'path', attrs:{d:`M ${cx-s} ${cy} L ${cx+s} ${cy} M ${cx} ${cy-s} L ${cx} ${cy+s}`,fill:'none',stroke:color,'stroke-width':2.4,'stroke-linecap':'round'}};
+      case 'none': return null;
+      default: return {tag:'circle', attrs:{cx,cy,r:4.7,fill:'#fff',stroke:color,'stroke-width':2.3}};
+    }
+  }
+
+  function addMarker(add, parent, style, cx, cy, color) {
+    const geom=markerShapeGeometry(style,cx,cy,color);
+    if(!geom) return null;
+    const g=add('g',{tabindex:0},parent);
+    add(geom.tag, geom.attrs, g);
+    add('circle',{cx,cy,r:10,fill:'transparent',stroke:'none','pointer-events':'all'},g);
+    return g;
+  }
+
+  function xmlEscape(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&apos;');
+  }
+
+  function wrapTextByLength(text, maxChars=88) {
+    const src=String(text||'').trim();
+    if(!src) return [];
+    const lines=[];
+    let rest=src;
+    while(rest.length>maxChars){
+      let cut=rest.lastIndexOf('，',maxChars);
+      if(cut<Math.floor(maxChars*0.45)) cut=rest.lastIndexOf('；',maxChars);
+      if(cut<Math.floor(maxChars*0.45)) cut=rest.lastIndexOf('。',maxChars);
+      if(cut<Math.floor(maxChars*0.45)) cut=rest.lastIndexOf(' ',maxChars);
+      if(cut<Math.floor(maxChars*0.45)) cut=maxChars;
+      lines.push(rest.slice(0,cut+1).trim());
+      rest=rest.slice(cut+1).trim();
+    }
+    if(rest) lines.push(rest);
+    return lines;
+  }
+
+  function buildExportSvgMarkup(options={}) {
+    const baseW=1200, chartH=460, pad=20;
+    const contentMode=options.contentMode||'all';
+    const chartInner=$('chart').innerHTML;
+    const legendEntries=state.gases.filter(e=>e.visible).map(e=>({color:e.color,label:buildLegendLabel(e)}));
+    const noteLines=contentMode==='all' ? wrapTextByLength($('chartNote').textContent||'', 90) : [];
+
+    let legendRows=[];
+    if(contentMode==='all' && legendEntries.length){
+      let row=[], cursor=0;
+      const maxW=baseW-40;
+      legendEntries.forEach(item=>{
+        const est=34 + item.label.length*7.2;
+        if(row.length && cursor + est > maxW){ legendRows.push(row); row=[]; cursor=0; }
+        row.push(item); cursor += est + 20;
+      });
+      if(row.length) legendRows.push(row);
+    }
+
+    const legendH=legendRows.length ? legendRows.length*24 + 14 : 0;
+    const noteH=noteLines.length ? noteLines.length*18 + 10 : 0;
+    const totalH=contentMode==='chart' ? chartH : (pad + chartH + (legendH?18+legendH:0) + (noteH?14+noteH:0) + 18);
+    const chartY=contentMode==='chart' ? 0 : pad;
+
+    let y=chartY + chartH + 24;
+    const parts=[];
+    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${options.width||1600}" height="${options.height||900}" viewBox="0 0 ${baseW} ${totalH}" role="img" aria-label="Garfield gas chart export">`);
+    parts.push(`<rect width="100%" height="100%" fill="#ffffff"/>`);
+    parts.push(`<svg x="0" y="${chartY}" width="${baseW}" height="${chartH}" viewBox="0 0 1200 460">${chartInner}</svg>`);
+
+    if(contentMode==='all' && legendRows.length){
+      parts.push(`<g font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="12" fill="#33425d">`);
+      legendRows.forEach(row=>{
+        let x=26;
+        row.forEach(item=>{
+          parts.push(`<circle cx="${x+7}" cy="${y-4}" r="6" fill="${item.color}" stroke="#ffffff" stroke-width="2"/>`);
+          parts.push(`<text x="${x+20}" y="${y}" dominant-baseline="middle">${xmlEscape(item.label)}</text>`);
+          x += 34 + item.label.length*7.2;
+        });
+        y += 24;
+      });
+      parts.push(`</g>`);
+    }
+
+    if(contentMode==='all' && noteLines.length){
+      y += 6;
+      parts.push(`<g font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="12" fill="#627087">`);
+      noteLines.forEach(line=>{
+        parts.push(`<text x="26" y="${y}" dominant-baseline="middle">${xmlEscape(line)}</text>`);
+        y += 18;
+      });
+      parts.push(`</g>`);
+    }
+
+    parts.push(`</svg>`);
+    return parts.join('');
+  }
+
+  async function exportChartImage() {
+    if(!state.gases.length) return;
+    const width=Math.max(400, +$('exportImageWidth').value || 1600);
+    const height=Math.max(300, +$('exportImageHeight').value || 900);
+    $('exportImageWidth').value=String(width);
+    $('exportImageHeight').value=String(height);
+    const format=$('exportImageFormat').value;
+    const contentMode=$('exportImageContent').value;
+    const svgMarkup=buildExportSvgMarkup({width,height,contentMode});
+    const stamp=new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
+    const baseName=`garfield_gas_chart_${stamp}`;
+    if(format==='svg') {
+      downloadBlob(`${baseName}.svg`, svgMarkup, 'image/svg+xml;charset=utf-8');
+      return;
+    }
+    const blob=new Blob([svgMarkup],{type:'image/svg+xml;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    try {
+      const img=await new Promise((resolve,reject)=>{
+        const im=new Image();
+        im.onload=()=>resolve(im);
+        im.onerror=()=>reject(new Error('SVG 转 PNG 失败。'));
+        im.src=url;
+      });
+      const canvas=document.createElement('canvas');
+      canvas.width=width; canvas.height=height;
+      const ctx=canvas.getContext('2d');
+      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,width,height);
+      ctx.drawImage(img,0,0,width,height);
+      const pngBlob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+      downloadBlob(`${baseName}.png`, pngBlob, 'image/png');
+    } finally {
+      setTimeout(()=>URL.revokeObjectURL(url),500);
+    }
+  }
+
+  function niceTicks(min,max,n=6) {
+    if(!Number.isFinite(min)||!Number.isFinite(max)) return [0,1];
+    if(min===max){const d=Math.abs(min||1)*.2;min-=d;max+=d;}
+    const span=max-min, raw=span/Math.max(1,n), pow=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/pow;
+    const step=(f<1.5?1:f<3?2:f<7?5:10)*pow, start=Math.ceil(min/step)*step, arr=[];
+    for(let v=start;v<=max+step*.25;v+=step) arr.push(v);
+    return arr;
+  }
+
+  function resetChartView(redraw=true) {
+    state.chartView=null;
+    state.chartBaseView=null;
+    state.chartSignature='';
+    state.chartGeometry=null;
+    state.chartDrag=null;
+    state.selectionRect=null;
+    $('chart')?.classList.remove('dragging');
+    if(redraw && state.gases.length) drawChart();
+  }
+
+  function cloneView(v) {
+    return v ? {xmin:v.xmin,xmax:v.xmax,ymin:v.ymin,ymax:v.ymax} : null;
+  }
+
+  function validView(v) {
+    return v && [v.xmin,v.xmax,v.ymin,v.ymax].every(Number.isFinite) && v.xmax>v.xmin && v.ymax>v.ymin;
+  }
+
+  function constrainView(v) {
+    if(!validView(v) || !validView(state.chartBaseView)) return v;
+    const b=state.chartBaseView;
+    const bx=b.xmax-b.xmin, by=b.ymax-b.ymin;
+    const minX=Math.max(bx*1e-7,1e-14), minY=Math.max(by*1e-7,1e-14);
+    const maxX=bx*1e4, maxY=by*1e4;
+    let sx=Math.min(maxX,Math.max(minX,v.xmax-v.xmin));
+    let sy=Math.min(maxY,Math.max(minY,v.ymax-v.ymin));
+    const cx=(v.xmin+v.xmax)/2, cy=(v.ymin+v.ymax)/2;
+    return {xmin:cx-sx/2,xmax:cx+sx/2,ymin:cy-sy/2,ymax:cy+sy/2};
+  }
+
+  function zoomChart(factorX=0.8,factorY=0.8,center=null) {
+    const v=state.chartView,g=state.chartGeometry;
+    if(!validView(v)||!g) return;
+    const cx=center?.x??(v.xmin+v.xmax)/2;
+    const cy=center?.y??(v.ymin+v.ymax)/2;
+    state.chartView=constrainView({
+      xmin:cx-(cx-v.xmin)*factorX,
+      xmax:cx+(v.xmax-cx)*factorX,
+      ymin:cy-(cy-v.ymin)*factorY,
+      ymax:cy+(v.ymax-cy)*factorY
+    });
+    drawChart();
+  }
+
+  function clientToSvg(evt) {
+    const svg=$('chart'),box=svg.getBoundingClientRect();
+    if(!box.width||!box.height) return {x:0,y:0};
+    return {x:(evt.clientX-box.left)/box.width*1200,y:(evt.clientY-box.top)/box.height*460};
+  }
+
+  function insidePlot(pt) {
+    const g=state.chartGeometry;
+    return !!g && pt.x>=g.m.l && pt.x<=g.W-g.m.r && pt.y>=g.m.t && pt.y<=g.H-g.m.b;
+  }
+
+  function svgToDomain(pt) {
+    const g=state.chartGeometry,v=state.chartView;
+    if(!g||!validView(v)) return {x:NaN,y:NaN};
+    const pw=g.W-g.m.l-g.m.r,ph=g.H-g.m.t-g.m.b;
+    return {
+      x:v.xmin+(pt.x-g.m.l)/pw*(v.xmax-v.xmin),
+      y:v.ymax-(pt.y-g.m.t)/ph*(v.ymax-v.ymin)
+    };
+  }
+
+  function updateInteractionCursor() {
+    const svg=$('chart'),mode=$('interactionMode')?.value||'pan';
+    svg.classList.toggle('mode-pan',mode==='pan');
+    svg.classList.toggle('mode-box',mode==='box');
+  }
+
+  function drawChart() {
+    if(!state.gases.length) return;
+    const svg=$('chart'),tooltip=$('tooltip'),legend=$('chartLegend');
+    applyLegendPosition();
+    svg.innerHTML='';tooltip.classList.add('hidden');legend.innerHTML='';
+    const p=paramInfo(), xScale=$('xScaleSelect').value, yScale=$('yScaleSelect').value;
+    const series=[]; let ignoredX=0,ignoredY=0,totalRaw=0;
+    state.gases.filter(e=>e.visible).forEach(entry=>{
+      const slice=currentSlice(entry.gas); totalRaw+=slice.length;
+      const points=[];
+      slice.forEach(r=>{
+        const x=xInfo(r).value,y=getValue(r,p.key);
+        if(!Number.isFinite(x)||!Number.isFinite(y)) return;
+        if(xScale==='log'&&x<=0){ignoredX++;return;}
+        if(yScale==='log'&&y<=0){ignoredY++;return;}
+        points.push({r,x,y,tx:xScale==='log'?Math.log10(x):x,ty:yScale==='log'?Math.log10(y):y});
+      });
+      if(points.length) series.push({entry,points});
+    });
+    state.gases.forEach(entry=>{
+      if(!entry.visible) return;
+      const label=buildLegendLabel(entry);
+      const item=document.createElement('div');item.className='legend-item';
+      const line=lineStyleMeta(entry.lineStyle);
+      item.innerHTML=`<span class="swatch" style="background:${entry.color}; border-radius:${entry.markerStyle==='square'?2:50}%; box-shadow:0 0 0 1px rgba(0,0,0,.18);"></span><span title="${escapeHtml(label)}">${escapeHtml(label)}</span>`;
+      item.style.borderLeft=`4px ${line.dash ? 'dashed' : 'solid'} ${entry.color}`;
+      item.style.paddingLeft='8px';
+      legend.appendChild(item);
+    });
+    if(!series.length){
+      svg.innerHTML='<text x="600" y="230" text-anchor="middle" fill="#77849a" font-size="18">当前设置没有可绘制的数据</text>';
+      $('chartNote').textContent='请检查曲线显隐、参数可用性，或对数坐标下是否存在正值。';return;
+    }
+    const W=1200,H=460,m={l:112,r:34,t:42,b:72};
+    const all=series.flatMap(s=>s.points), txs=all.map(d=>d.tx),tys=all.map(d=>d.ty);
+    let dataXmin=Math.min(...txs),dataXmax=Math.max(...txs),dataYmin=Math.min(...tys),dataYmax=Math.max(...tys);
+    const xp=(dataXmax-dataXmin||1)*.035,yp=(dataYmax-dataYmin||1)*.08;
+    dataXmin-=xp;dataXmax+=xp;dataYmin-=yp;dataYmax+=yp;
+    const targetForSignature=targetSliceValues();
+    const signature=[xInfo(all[0].r).key,p.key,xScale,yScale,targetForSignature.angle,targetForSignature.bRaw,state.gases.filter(e=>e.visible).map(e=>e.id).join(',')].join('|');
+    const baseView={xmin:dataXmin,xmax:dataXmax,ymin:dataYmin,ymax:dataYmax};
+    if(state.chartSignature!==signature || !validView(state.chartView)) {
+      state.chartSignature=signature;
+      state.chartBaseView=cloneView(baseView);
+      state.chartView=cloneView(baseView);
+    } else {
+      state.chartBaseView=cloneView(baseView);
+      state.chartView=constrainView(state.chartView);
+    }
+    const {xmin,xmax,ymin,ymax}=state.chartView;
+    state.chartGeometry={W,H,m};
+    const X=x=>m.l+(x-xmin)/(xmax-xmin)*(W-m.l-m.r),Y=y=>m.t+(ymax-y)/(ymax-ymin)*(H-m.t-m.b);
+    const ns='http://www.w3.org/2000/svg';
+    const add=(tag,attrs,parent=svg)=>{const e=document.createElementNS(ns,tag);Object.entries(attrs||{}).forEach(([k,v])=>e.setAttribute(k,v));parent.appendChild(e);return e;};
+    add('rect',{x:0,y:0,width:W,height:H,fill:'#fff'});
+    const defs=add('defs',{});
+    const clip=add('clipPath',{id:'plotClip'},defs);
+    add('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b},clip);
+    const plotGroup=add('g',{'clip-path':'url(#plotClip)'});
+    const xTicks=niceTicks(xmin,xmax,7),yTicks=niceTicks(ymin,ymax,6);
+    xTicks.forEach(v=>{const x=X(v);add('line',{x1:x,y1:m.t,x2:x,y2:H-m.b,stroke:'#e6ebf3','stroke-width':1});const t=add('text',{x,y:H-m.b+23,'text-anchor':'middle',fill:'#66748a','font-size':12});t.textContent=xScale==='log'?formatNumber(Math.pow(10,v),4):formatNumber(v,5);});
+    yTicks.forEach(v=>{const y=Y(v);add('line',{x1:m.l,y1:y,x2:W-m.r,y2:y,stroke:'#e6ebf3','stroke-width':1});const t=add('text',{x:m.l-12,y:y+4,'text-anchor':'end',fill:'#66748a','font-size':12});t.textContent=yScale==='log'?formatNumber(Math.pow(10,v),4):formatNumber(v,5);});
+    add('line',{x1:m.l,y1:m.t,x2:m.l,y2:H-m.b,stroke:'#4d5c73','stroke-width':1.4});
+    add('line',{x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke:'#4d5c73','stroke-width':1.4});
+    series.forEach(({entry,points})=>{
+      const line=lineStyleMeta(entry.lineStyle);
+      const polyAttrs={points:points.map(d=>`${X(d.tx)},${Y(d.ty)}`).join(' '),fill:'none',stroke:entry.color,'stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'};
+      if(line.dash) polyAttrs['stroke-dasharray']=line.dash;
+      add('polyline', polyAttrs, plotGroup);
+      points.forEach(d=>{
+        const cx=X(d.tx),cy=Y(d.ty);const c=addMarker(add, plotGroup, entry.markerStyle, cx, cy, entry.color);
+        if(!c) return;
+        const show=()=>{const box=svg.getBoundingClientRect(),sx=(cx/W)*box.width,sy=(cy/H)*box.height;tooltip.innerHTML=`文件：<b>${escapeHtml(entry.gas.fileName)}</b><br>线型：<b>${escapeHtml(lineStyleMeta(entry.lineStyle).label)}</b>　点型：<b>${escapeHtml((MARKER_STYLE_OPTIONS.find(m=>m.key===entry.markerStyle)||MARKER_STYLE_OPTIONS[0]).label)}</b><br>${xInfo(d.r).label}: <b>${formatNumber(d.x,7)}</b><br>${escapeHtml(p.label)}: <b>${formatNumber(d.y,7)}</b><br>网格点 #${d.r.ie}`;tooltip.style.left=`${sx}px`;tooltip.style.top=`${sy}px`;tooltip.classList.remove('hidden');};
+        c.addEventListener('mouseenter',show);c.addEventListener('focus',show);c.addEventListener('mouseleave',()=>tooltip.classList.add('hidden'));c.addEventListener('blur',()=>tooltip.classList.add('hidden'));
+      });
+    });
+    const example=series[0].points[0].r;
+    const xt=add('text',{x:(m.l+W-m.r)/2,y:H-18,'text-anchor':'middle',fill:'#27364f','font-size':15,'font-weight':650});xt.textContent=xInfo(example).label+(xScale==='log'?'（对数轴）':'');
+    const yt=add('text',{x:21,y:(m.t+H-m.b)/2,'text-anchor':'middle',fill:'#27364f','font-size':15,'font-weight':650,transform:`rotate(-90 21 ${(m.t+H-m.b)/2})`});yt.textContent=p.label+(yScale==='log'?'（对数轴）':'');
+    const title=add('text',{x:m.l,y:25,fill:'#172033','font-size':16,'font-weight':700});title.textContent=`${series.length} 个气体文件对比 — ${p.label}`;
+    const target=targetSliceValues();
+    const bx=state.chartBaseView.xmax-state.chartBaseView.xmin,by=state.chartBaseView.ymax-state.chartBaseView.ymin;
+    const zx=bx/(xmax-xmin),zy=by/(ymax-ymin);
+    $('chartNote').textContent=`目标切片：E–B 夹角 ${formatNumber(target.angle,6)} rad（${formatNumber(target.angle*180/Math.PI,5)}°），B=${formatNumber(target.bRaw/100,6)} T；每个文件自动采用最接近的可用切片。共绘制 ${all.length}/${totalRaw} 个点${ignoredX?`，横轴对数忽略 ${ignoredX} 个非正值`:''}${ignoredY?`，纵轴对数忽略 ${ignoredY} 个非正值`:''}。当前缩放：X ${formatNumber(zx,4)}×，Y ${formatNumber(zy,4)}×。`;
+    updateInteractionCursor();
+  }
+
+  function renderFileList() {
+    const list=$('fileList');
+    list.innerHTML=state.gases.map((entry,i)=>`<div class="file-row ${i===state.activeIndex?'active':''}" data-id="${entry.id}">
+      <label class="curve-toggle" title="显示/隐藏曲线"><input type="checkbox" class="visible-toggle" ${entry.visible?'checked':''}><span class="swatch" style="background:${entry.color}"></span></label>
+      <div class="file-main"><div class="file-name" title="${escapeHtml(entry.gas.fileName)}">${escapeHtml(entry.gas.fileName)}</div><div class="file-sub">${escapeHtml(entry.gas.identifier)} · ${formatNumber(entry.gas.pressure/760,6)} atm · ${entry.gas.nE} 个电场点</div><div class="file-style-row"><label>线型<select class="line-style-select">${LINE_STYLE_OPTIONS.map(opt=>`<option value="${opt.key}" ${entry.lineStyle===opt.key?'selected':''}>${opt.label}</option>`).join('')}</select></label><label>点型<select class="marker-style-select">${MARKER_STYLE_OPTIONS.map(opt=>`<option value="${opt.key}" ${entry.markerStyle===opt.key?'selected':''}>${opt.label}</option>`).join('')}</select></label></div></div>
+      <div class="file-meta small-note">Version ${entry.gas.version} · B ${entry.gas.nB} · angle ${entry.gas.nAngles}</div>
+      <div class="file-actions"><div class="move-buttons"><button class="move-up secondary" ${i===0?'disabled':''}>上移</button><button class="move-down secondary" ${i===state.gases.length-1?'disabled':''}>下移</button></div><button class="set-active secondary" ${i===state.activeIndex?'disabled':''}>设为当前</button><button class="remove-file secondary">移除</button></div>
+    </div>`).join('');
+    list.querySelectorAll('.file-row').forEach(row=>{
+      const id=+row.dataset.id;
+      row.querySelector('.visible-toggle').addEventListener('change',e=>{const x=state.gases.find(v=>v.id===id);if(x)x.visible=e.target.checked;resetChartView(true);});
+      row.querySelector('.line-style-select')?.addEventListener('change',e=>{const x=state.gases.find(v=>v.id===id);if(x){x.lineStyle=e.target.value;drawChart();}});
+      row.querySelector('.marker-style-select')?.addEventListener('change',e=>{const x=state.gases.find(v=>v.id===id);if(x){x.markerStyle=e.target.value;drawChart();}});
+      row.querySelector('.move-up')?.addEventListener('click',()=>moveById(id,-1));
+      row.querySelector('.move-down')?.addEventListener('click',()=>moveById(id,1));
+      row.querySelector('.set-active').addEventListener('click',()=>setActiveById(id));
+      row.querySelector('.remove-file').addEventListener('click',()=>removeById(id));
+    });
+    $('activeGasSelect').innerHTML=state.gases.map((e,i)=>`<option value="${i}">${escapeHtml(e.gas.fileName)}</option>`).join('');
+    $('activeGasSelect').value=String(state.activeIndex);
+  }
+
+  function renderTable() {
+    const table=$('dataTable'),rows=currentSlice(),g=activeGas(); if(!g)return;
+    const headers=['#','E/p\n[V/(cm·Torr)]','E\n[V/cm]','E/N\n[Td]','vE\n[cm/ns]','DL\n[μm/√cm]','DT\n[μm/√cm]','α\n[cm⁻¹]','α₀\n[cm⁻¹]','η\n[cm⁻¹]','αeff\n[cm⁻¹]','α/p','η/p','B\n[T]','角度\n[deg]','总激发速率','总电离速率'];
+    table.innerHTML='<thead><tr>'+headers.map(h=>`<th>${h.replace('\n','<br>')}</th>`).join('')+'</tr></thead><tbody>'+rows.map(r=>{const vals=[r.ie,r.EoverP,r.E,r.EoverN,r.veCmNs,r.dlUmSqrtCm,r.dtUmSqrtCm,r.alpha,r.alpha0,r.eta,r.alphaEff,r.alphaReduced,r.etaReduced,r.BTesla,r.angleDeg,r.excitationTotal,r.ionisationTotal];return '<tr>'+vals.map((v,i)=>`<td>${i===0?v:formatNumber(v,7)}</td>`).join('')+'</tr>';}).join('')+'</tbody>';
+  }
+
+  function renderLevels() {
+    const gas=activeGas();if(!gas)return;const rows=currentSlice(gas);let ie=+$('rateFieldSelect').value;if(!Number.isFinite(ie))ie=0;const rec=rows.find(r=>r.ie===ie)||rows[0];
+    $('excCount').textContent=`(${gas.excitationLevels.length||gas.nExc})`;$('ionCount').textContent=`(${gas.ionisationLevels.length||gas.nIon})`;
+    const make=(levels,rates)=>levels.map((l,i)=>`<div class="level"><div class="level-title">${escapeHtml(l.label||`通道 ${i+1}`)}</div><div class="level-meta">能级：${formatNumber(l.energy,7)} eV　速率：${formatNumber(rates?.[i]??NaN,7)}</div></div>`).join('');
+    $('excLevels').innerHTML=make(gas.excitationLevels,rec?.raw.excitationRates)||'<div class="footnote">文件未包含激发通道清单。</div>';
+    $('ionLevels').innerHTML=make(gas.ionisationLevels,rec?.raw.ionisationRates)||'<div class="footnote">文件未包含电离通道清单。</div>';
+  }
+
+  function renderMeta() {
+    const g=activeGas();if(!g)return;
+    const cards=[['文件名',g.fileName],['气体标识',g.identifier],['格式版本',String(g.version)],['压力',`${formatNumber(g.pressure,8)} Torr (${formatNumber(g.pressure/760,6)} atm)`],['温度',`${formatNumber(g.temperature,8)} K (${formatNumber(g.temperature-273.15,6)} °C)`],['网格维度',`${g.map2d?'三维表':'一维表'}：E ${g.nE} × 角度 ${g.nAngles} × B ${g.nB}`],['激发/电离通道',`${g.nExc} / ${g.nIon}`],['记录长度',`${g.recordSize} 个数值/网格记录`]];
+    $('metaGrid').innerHTML=cards.map(([a,b])=>`<div class="meta-card"><div class="meta-label">${a}</div><div class="meta-value">${escapeHtml(b)}</div></div>`).join('');
+    $('gasBits').innerHTML=GAS_BITS.slice(0,Math.max(g.gasBits.length,16)).map((name,i)=>`<span class="chip ${g.gasBits[i]==='T'?'on':'off'}">${i+1}. ${name}: ${g.gasBits[i]==='T'?'有':'无'}</span>`).join('');
+    const nz=g.mixture.map((v,i)=>({i:i+1,v})).filter(x=>x.v!==0);$('mixtureInfo').innerHTML=nz.length?nz.map(x=>`Magboltz 气体编号 ${x.i}: <b>${formatNumber(x.v,8)}%</b>`).join('； '):'未解析到非零组分；请以 Identifier 为准。';
+  }
+
+  function populateSliceControls() {
+    const g=activeGas();if(!g)return;
+    const oldAngle=targetSliceValues().angle,oldB=targetSliceValues().bRaw;
+    $('angleSelect').innerHTML=g.angles.map((a,i)=>`<option value="${i}">${formatNumber(a,7)} rad (${formatNumber(a*180/Math.PI,6)}°)</option>`).join('');
+    $('bSelect').innerHTML=g.bRaw.map((b,i)=>`<option value="${i}">${formatNumber(b/100,7)} T（文件值 ${formatNumber(b,7)}）</option>`).join('');
+    $('angleSelect').value=String(nearestIndex(g.angles,oldAngle));$('bSelect').value=String(nearestIndex(g.bRaw,oldB));
+    $('angleControl').classList.toggle('hidden',g.nAngles<=1);$('bControl').classList.toggle('hidden',g.nB<=1);
+    $('rateFieldSelect').innerHTML=g.eOverP.map((ep,i)=>`<option value="${i}">#${i}：E=${formatNumber(ep*g.pressure,8)} V/cm，E/p=${formatNumber(ep,8)}</option>`).join('');
+  }
+
+  function setActiveById(id){const idx=state.gases.findIndex(e=>e.id===id);if(idx>=0){state.activeIndex=idx;renderAll();}}
+  function moveById(id, delta){
+    const idx=state.gases.findIndex(e=>e.id===id), target=idx+delta;
+    if(idx<0 || target<0 || target>=state.gases.length) return;
+    const [entry]=state.gases.splice(idx,1);
+    state.gases.splice(target,0,entry);
+    if(state.activeIndex===idx) state.activeIndex=target;
+    else if(idx<state.activeIndex && target>=state.activeIndex) state.activeIndex--;
+    else if(idx>state.activeIndex && target<=state.activeIndex) state.activeIndex++;
+    renderAll(false);
+  }
+  function removeById(id){const idx=state.gases.findIndex(e=>e.id===id);if(idx<0)return;state.gases.splice(idx,1);if(state.activeIndex>=state.gases.length)state.activeIndex=Math.max(0,state.gases.length-1);if(!state.gases.length){$('results').classList.add('hidden');$('status').className='status info';$('status').textContent='当前没有已载入文件。请选择一个或多个气体文件。';}else renderAll();}
+
+  function csvEscape(s){const t=String(s);return /[",\n]/.test(t)?`"${t.replace(/"/g,'""')}"`:t;}
+  function downloadBlob(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);}
+
+  function exportCsv(){
+    const cols=[['file_name',(_,e)=>e.gas.fileName],['identifier',(_,e)=>e.gas.identifier],['pressure_Torr',(_,e)=>e.gas.pressure],['index',r=>r.ie],['E_over_p_V_per_cm_Torr',r=>r.EoverP],['E_V_per_cm',r=>r.E],['E_over_N_Td',r=>r.EoverN],['B_T',r=>r.BTesla],['angle_rad',r=>r.angleRad],['angle_deg',r=>r.angleDeg],['vE_cm_per_ns',r=>r.veCmNs],['vB_cm_per_ns',r=>r.vbCmNs],['vExB_cm_per_ns',r=>r.vexbCmNs],['DL_um_per_sqrt_cm',r=>r.dlUmSqrtCm],['DT_um_per_sqrt_cm',r=>r.dtUmSqrtCm],['alpha_cm-1',r=>r.alpha],['alpha0_cm-1',r=>r.alpha0],['eta_cm-1',r=>r.eta],['alpha_eff_cm-1',r=>r.alphaEff],['alpha_over_p',r=>r.alphaReduced],['eta_over_p',r=>r.etaReduced],['alpha_eff_over_p',r=>r.alphaEffReduced],['lorentz_raw',r=>r.lorentz],['ion_mobility_cm2_V_s',r=>r.ionMobilityCm2Vs],['excitation_total_rate',r=>r.excitationTotal],['ionisation_total_rate',r=>r.ionisationTotal]];
+    const entries=state.gases.filter(e=>e.visible),lines=[cols.map(c=>csvEscape(c[0])).join(',')];
+    entries.forEach(e=>currentSlice(e.gas).forEach(r=>lines.push(cols.map(c=>csvEscape(c[1](r,e))).join(','))));
+    downloadBlob('garfield_gas_comparison.csv','\ufeff'+lines.join('\n'),'text/csv;charset=utf-8');
+  }
+
+  function compactGas(g){return {...g,records:g.records.map(r=>({ie:r.ie,ia:r.ia,ib:r.ib,EoverP:r.EoverP,E:r.E,EoverN:r.EoverN,BTesla:r.BTesla,angleRad:r.angleRad,veCmNs:r.veCmNs,vbCmNs:r.vbCmNs,vexbCmNs:r.vexbCmNs,dlSqrtCm:r.dlSqrtCm,dtSqrtCm:r.dtSqrtCm,alpha:r.alpha,alpha0:r.alpha0,eta:r.eta,alphaEff:r.alphaEff,alphaReduced:r.alphaReduced,etaReduced:r.etaReduced,lorentz:r.lorentz,ionMobilityCm2Vs:r.ionMobilityCm2Vs,tensor:r.tensor,excitationRates:r.raw.excitationRates,ionisationRates:r.raw.ionisationRates}))};}
+  function exportJson(){downloadBlob('garfield_gas_comparison.json',JSON.stringify(state.gases.map(e=>({visible:e.visible,color:e.color,lineStyle:e.lineStyle,markerStyle:e.markerStyle,gas:compactGas(e.gas)})),null,2),'application/json;charset=utf-8');}
+
+  function renderAll(resetView=true){
+    if(!state.gases.length)return;
+    if(resetView) resetChartView(false);
+    const oldAngle=targetSliceValues().angle,oldB=targetSliceValues().bRaw;
+    renderFileList();renderMeta();populateSliceControls();
+    const g=activeGas();$('angleSelect').value=String(nearestIndex(g.angles,oldAngle));$('bSelect').value=String(nearestIndex(g.bRaw,oldB));
+    populateParameterSelect();$('results').classList.remove('hidden');renderTable();renderLevels();drawChart();
+  }
+
+  async function loadFiles(fileList){
+    const files=[...fileList];if(!files.length)return;
+    $('status').className='status info';$('status').textContent=`正在读取 ${files.length} 个文件…`;
+    const successes=[],failures=[],warnings=[];
+    for(const file of files){
+      try{
+        const gas=parseGasFile(await file.text(),file.name);
+        const markerDefault=MARKER_STYLE_OPTIONS[state.gases.length % (MARKER_STYLE_OPTIONS.length-1)].key;
+        const entry={id:state.nextId++,gas,visible:true,color:PALETTE[state.gases.length%PALETTE.length],lineStyle:'solid',markerStyle:markerDefault};state.gases.push(entry);successes.push(file.name);
+        if(gas.extraValues)warnings.push(`${file.name}: 尾部有 ${gas.extraValues} 个未使用数值`);
+        if(gas.extraActiveBits.length)warnings.push(`${file.name}: GASOK 扩展位 ${gas.extraActiveBits.join(', ')} 为 T`);
+        if(![10,11,12].includes(gas.version))warnings.push(`${file.name}: Version=${gas.version} 尚未重点验证`);
+      }catch(err){failures.push(`${file.name}: ${err.message}`);console.error(err);}
+    }
+    if(successes.length){state.activeIndex=state.gases.length-successes.length;renderAll();}
+    if(failures.length){$('status').className='status error';$('status').textContent=`成功读取 ${successes.length} 个，失败 ${failures.length} 个。\n${failures.join('\n')}${warnings.length?'\n注意：'+warnings.join('；'):''}`;}
+    else if(warnings.length){$('status').className='status warn';$('status').textContent=`成功追加 ${successes.length} 个文件，当前共 ${state.gases.length} 个。注意：${warnings.join('；')}。`;}
+    else{$('status').className='status success';$('status').textContent=`成功追加 ${successes.length} 个文件，当前共载入 ${state.gases.length} 个气体文件。`;}
+    $('fileInput').value='';
+  }
+
+  const dz=$('dropZone'),fi=$('fileInput');
+  dz.addEventListener('click',()=>fi.click());dz.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fi.click();}});
+  fi.addEventListener('change',()=>loadFiles(fi.files));
+  ['dragenter','dragover'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('dragover');}));
+  ['dragleave','drop'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove('dragover');}));
+  dz.addEventListener('drop',e=>loadFiles(e.dataTransfer.files));
+  $('addFiles').addEventListener('click',()=>fi.click());
+  $('clearFiles').addEventListener('click',()=>{state.gases=[];state.activeIndex=0;$('results').classList.add('hidden');$('status').className='status info';$('status').textContent='已清空全部文件。可以重新批量选择气体文件。';});
+  $('activeGasSelect').addEventListener('change',e=>{state.activeIndex=+e.target.value;renderAll();});
+  ['xSelect','xScaleSelect','ySelect','yScaleSelect'].forEach(id=>$(id).addEventListener('change',()=>resetChartView(true)));
+  ['angleSelect','bSelect'].forEach(id=>$(id).addEventListener('change',()=>{renderTable();renderLevels();resetChartView(true);}));
+  $('rateFieldSelect').addEventListener('change',renderLevels);$('exportCsv').addEventListener('click',exportCsv);$('exportJson').addEventListener('click',exportJson);
+  ['legendFileName','legendComposition','legendTemperature','legendPressure','legendPosition'].forEach(id=>$(id).addEventListener('change',()=>drawChart()));
+  $('exportChartImage').addEventListener('click',()=>exportChartImage().catch(err=>{console.error(err);$('status').className='status error';$('status').textContent=`图片导出失败：${err.message}`;}));
+
+  $('interactionMode').addEventListener('change',()=>{state.chartDrag=null;state.selectionRect=null;$('chart').classList.remove('dragging');updateInteractionCursor();drawChart();});
+  $('zoomIn').addEventListener('click',()=>zoomChart(0.78,0.78));
+  $('zoomOut').addEventListener('click',()=>zoomChart(1.28,1.28));
+  $('zoomXIn').addEventListener('click',()=>zoomChart(0.72,1));
+  $('zoomYIn').addEventListener('click',()=>zoomChart(1,0.72));
+  $('resetZoom').addEventListener('click',()=>resetChartView(true));
+
+  const chart=$('chart');
+  chart.addEventListener('wheel',e=>{
+    if(!state.chartGeometry||!validView(state.chartView)) return;
+    const pt=clientToSvg(e);if(!insidePlot(pt)) return;
+    e.preventDefault();
+    const c=svgToDomain(pt),factor=e.deltaY<0?0.82:1.22;
+    if(e.shiftKey) zoomChart(factor,1,c);
+    else if(e.altKey) zoomChart(1,factor,c);
+    else zoomChart(factor,factor,c);
+  },{passive:false});
+
+  chart.addEventListener('pointerdown',e=>{
+    if(e.button!==0||!state.chartGeometry||!validView(state.chartView)) return;
+    const pt=clientToSvg(e);if(!insidePlot(pt)) return;
+    const mode=$('interactionMode').value;
+    state.chartDrag={mode,start:pt,last:pt,startView:cloneView(state.chartView),moved:false};
+    chart.setPointerCapture(e.pointerId);
+    chart.classList.add('dragging');
+    if(mode==='box'){
+      const ns='http://www.w3.org/2000/svg';
+      const r=document.createElementNS(ns,'rect');
+      r.setAttribute('x',pt.x);r.setAttribute('y',pt.y);r.setAttribute('width',0);r.setAttribute('height',0);
+      r.setAttribute('fill','rgba(36,89,211,.14)');r.setAttribute('stroke','#2459d3');r.setAttribute('stroke-width','1.5');r.setAttribute('stroke-dasharray','7 5');
+      r.setAttribute('pointer-events','none');chart.appendChild(r);state.selectionRect=r;
+    }
+  });
+
+  chart.addEventListener('pointermove',e=>{
+    const d=state.chartDrag;if(!d||!state.chartGeometry) return;
+    const pt=clientToSvg(e);d.last=pt;
+    if(Math.hypot(pt.x-d.start.x,pt.y-d.start.y)>3)d.moved=true;
+    if(d.mode==='pan'){
+      const g=state.chartGeometry,pw=g.W-g.m.l-g.m.r,ph=g.H-g.m.t-g.m.b,v=d.startView;
+      const dx=(pt.x-d.start.x)/pw*(v.xmax-v.xmin),dy=(pt.y-d.start.y)/ph*(v.ymax-v.ymin);
+      state.chartView=constrainView({xmin:v.xmin-dx,xmax:v.xmax-dx,ymin:v.ymin+dy,ymax:v.ymax+dy});
+      drawChart();
+      state.chartDrag={...d,last:pt};
+      chart.setPointerCapture(e.pointerId);
+      chart.classList.add('dragging');
+    }else if(state.selectionRect){
+      const g=state.chartGeometry;
+      const x1=Math.max(g.m.l,Math.min(d.start.x,pt.x)),x2=Math.min(g.W-g.m.r,Math.max(d.start.x,pt.x));
+      const y1=Math.max(g.m.t,Math.min(d.start.y,pt.y)),y2=Math.min(g.H-g.m.b,Math.max(d.start.y,pt.y));
+      state.selectionRect.setAttribute('x',x1);state.selectionRect.setAttribute('y',y1);
+      state.selectionRect.setAttribute('width',Math.max(0,x2-x1));state.selectionRect.setAttribute('height',Math.max(0,y2-y1));
+    }
+  });
+
+  function finishChartDrag(e){
+    const d=state.chartDrag;if(!d)return;
+    chart.classList.remove('dragging');
+    if(d.mode==='box'&&d.moved){
+      const g=state.chartGeometry;
+      const a={x:Math.max(g.m.l,Math.min(d.start.x,d.last.x)),y:Math.max(g.m.t,Math.min(d.start.y,d.last.y))};
+      const b={x:Math.min(g.W-g.m.r,Math.max(d.start.x,d.last.x)),y:Math.min(g.H-g.m.b,Math.max(d.start.y,d.last.y))};
+      if(b.x-a.x>8&&b.y-a.y>8){
+        const da=svgToDomain(a),db=svgToDomain(b);
+        state.chartView=constrainView({xmin:da.x,xmax:db.x,ymin:db.y,ymax:da.y});
+      }
+    }
+    state.chartDrag=null;state.selectionRect=null;
+    try{if(e&&chart.hasPointerCapture(e.pointerId))chart.releasePointerCapture(e.pointerId);}catch(_){ }
+    drawChart();
+  }
+  chart.addEventListener('pointerup',finishChartDrag);
+  chart.addEventListener('pointercancel',finishChartDrag);
+  chart.addEventListener('dblclick',e=>{e.preventDefault();resetChartView(true);});
+
+  window.addEventListener('resize',()=>{if(state.gases.length)drawChart();});
+})();
+</script>
+</body>
+</html>
