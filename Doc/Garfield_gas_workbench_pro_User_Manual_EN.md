@@ -60,6 +60,22 @@ Assume that several files correspond to increasing SF6 fraction:
 8. Enable logarithmic X or Y scaling when physically appropriate.
 9. Export SVG or PNG using the single-column or double-column paper preset.
 
+## 2.3 Search and Add Files from the Repository
+
+When the workbench is opened through GitHub Pages or a local repository web server:
+
+1. Select **Search repository gas files** near the initial file picker or beside **Add Files**.
+2. Enter gas components and optional fractions, temperature, pressure, quality, alias, or path filters.
+3. Review each candidate's composition, conditions, file size, Garfield version, GASOK availability, E/p range, magnetic-field range, angle range, and grid dimensions.
+4. Select individual files or select the closest three or five results.
+5. Select **Add selected files**. Successfully parsed files are appended to the normal workbench file list.
+
+The loader accepts only index-listed paths below `GasFile/`, limits total selected size and download concurrency, supports cancellation, and verifies SHA-256 when Web Crypto is available. Duplicate repository paths or hashes are skipped. Repository path, SHA-256, index generation time, and indexed metadata are included in saved project files.
+
+The standalone gas-file search page also has **English workbench** and **中文工作台** actions. These open the selected result in the corresponding localized workbench and add it after index validation.
+
+Opening the HTML through `file://` keeps all original local loading, plotting, analysis, export, and project features. Repository search requires HTTP through GitHub Pages or a local web server.
+
 # 3. Supported Files and Parsing Rules
 
 ## 3.1 Supported File Type

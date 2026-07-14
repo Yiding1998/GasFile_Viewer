@@ -89,6 +89,46 @@ class GasParsingTests(unittest.TestCase):
         self.assertIn("missing_component_fraction", record["quality_flags"])
 
 
+class TransportCoverageTests(unittest.TestCase):
+    SAMPLE_HEADER = """
+ Version   : 12
+ GASOK bits: TFTTFTTTTTTFFFFTFFFF
+ Dimension : F         3         2         2         4         5
+ E fields
+ 1.0D+00 2.5E+00 5.0E+00
+ E-B angles
+ 0.0 1.57079633
+ B fields
+ 0.0 5.0E+01
+ Mixture:
+ """
+
+    def test_transport_grid_coverage_is_extracted(self) -> None:
+        coverage = gas_index.parse_transport_coverage(self.SAMPLE_HEADER)
+        self.assertEqual(coverage["format_version"], 12)
+        self.assertFalse(coverage["map_2d"])
+        self.assertEqual(coverage["gasok_bits"], "TFTTFTTTTTTFFFFTFFFF")
+        self.assertEqual(
+            coverage["dimensions"],
+            {
+                "electric_field_count": 3,
+                "angle_count": 2,
+                "magnetic_field_count": 2,
+                "excitation_count": 4,
+                "ionisation_count": 5,
+            },
+        )
+        self.assertEqual(coverage["e_over_p_v_cm_torr"], {"min": 1, "max": 5})
+        self.assertEqual(coverage["magnetic_field_t"], {"min": 0, "max": 0.5})
+        self.assertEqual(
+            coverage["angle_rad"],
+            {"min": 0, "max": 1.57079633},
+        )
+
+    def test_missing_dimension_has_no_coverage(self) -> None:
+        self.assertEqual(gas_index.parse_transport_coverage("Identifier: Ar 100%"), {})
+
+
 class IndexLifecycleTests(unittest.TestCase):
     def test_index_check_detects_stale_gas_content(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

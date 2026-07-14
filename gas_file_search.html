@@ -257,7 +257,7 @@ tr:hover td{background:#fafcfb}
     <div id="empty" class="empty hidden"></div>
     <div id="tableWrap" class="table-wrap">
       <table>
-        <thead><tr><th>#</th><th>Composition</th><th>Conditions</th><th>Match details</th><th>File</th><th>Actions</th></tr></thead>
+        <thead><tr><th>#</th><th>Composition</th><th>Conditions</th><th>Match details</th><th>Coverage</th><th>File</th><th>Actions</th></tr></thead>
         <tbody id="resultBody"></tbody>
       </table>
     </div>
@@ -265,9 +265,11 @@ tr:hover td{background:#fafcfb}
 </main>
 <div id="toast" class="toast hidden" role="status"></div>
 
+<script src="gas-search-core.js"></script>
 <script>
-const ATM_PA=101325;
-const PRESSURE_FACTORS={atm:ATM_PA,bar:100000,mbar:100,Pa:1,kPa:1000,Torr:ATM_PA/760};
+const searchCore=window.GasSearchCore;
+const ATM_PA=searchCore.ATM_PA;
+const PRESSURE_FACTORS=searchCore.PRESSURE_FACTORS;
 const state={files:[],results:[],components:[],mode:'nearest',schema:0};
 const el=id=>document.getElementById(id);
 const num=value=>value===''||value===null||value===undefined?null:Number(value);
@@ -277,16 +279,8 @@ const attr=value=>esc(value).replace(/'/g,'&#39;');
 const fmt=(value,digits=3)=>finite(value)?Number(value.toFixed(digits)).toString():'—';
 const signed=(value,digits=3)=>finite(value)?(value>0?'+':'')+fmt(value,digits):'—';
 
-function temperatureToK(value,unit){
-  if(!finite(value))return null;
-  if(unit==='C')return value+273.15;
-  if(unit==='F')return (value-32)*5/9+273.15;
-  return value;
-}
-function pressureToPa(value,unit){
-  if(!finite(value)||value<=0)return null;
-  return value*(PRESSURE_FACTORS[unit]||1);
-}
+const temperatureToK=searchCore.temperatureToK;
+const pressureToPa=searchCore.pressureToPa;
 function componentOptions(selected){
   return '<option value="">Select gas</option>'+state.components.map(name=>
     '<option value="'+attr(name)+'"'+(name===selected?' selected':'')+'>'+esc(name)+'</option>'
@@ -346,109 +340,8 @@ function getQuery(){
     sort:el('sortBy').value
   };
 }
-function fileComponentMap(file){
-  const map=new Map();
-  (file.components||[]).forEach(item=>map.set(item.name,item.fraction));
-  return map;
-}
-function evaluate(file,query){
-  if(query.text){
-    const terms=query.text.split(/[\s,;+]+/).filter(Boolean);
-    const hay=(file.search_text||'').toLowerCase();
-    if(!terms.every(term=>hay.includes(term)))return null;
-  }
-  if(query.quality==='ready'&&!file.match_ready)return null;
-  if(query.quality==='warning'&&file.data_quality!=='warning')return null;
-
-  const names=file.component_names||[];
-  if(query.components.some(item=>!names.includes(item.name)))return null;
-  if(query.exactSet&&query.components.length&&names.length!==query.components.length)return null;
-
-  const map=fileComponentMap(file);
-  const fractionTargets=query.components.filter(item=>finite(item.fraction));
-  const componentDiffs=[];
-  for(const target of fractionTargets){
-    const actual=map.get(target.name);
-    if(!finite(actual))return null;
-    componentDiffs.push({
-      name:target.name,
-      signed:actual-target.fraction,
-      absolute:Math.abs(actual-target.fraction),
-      tolerance:target.tolerance
-    });
-  }
-
-  let compositionDelta=null;
-  if(componentDiffs.length){
-    const sumAbs=componentDiffs.reduce((sum,item)=>sum+item.absolute,0);
-    const complete=query.exactSet&&fractionTargets.length===query.components.length;
-    compositionDelta=complete?sumAbs/2:sumAbs/componentDiffs.length;
-  }
-
-  let temperatureSigned=null;
-  if(finite(query.temperature)){
-    if(!finite(file.temperature_k))return null;
-    temperatureSigned=file.temperature_k-query.temperature;
-  }
-
-  let pressureSignedPct=null;
-  if(finite(query.pressure)){
-    if(!finite(file.pressure_pa)||file.pressure_pa<=0)return null;
-    pressureSignedPct=(file.pressure_pa-query.pressure)/query.pressure*100;
-  }
-
-  if(query.mode==='range'){
-    if(componentDiffs.some(item=>item.absolute>item.tolerance+1e-9))return null;
-    if(finite(temperatureSigned)&&Math.abs(temperatureSigned)>query.temperatureTolerance+1e-9)return null;
-    if(finite(pressureSignedPct)&&Math.abs(pressureSignedPct)>query.pressureTolerance+1e-9)return null;
-  }
-  if(query.mode==='exact'){
-    if(componentDiffs.some(item=>item.absolute>1e-6))return null;
-    if(finite(temperatureSigned)&&Math.abs(temperatureSigned)>1e-6)return null;
-    if(finite(pressureSignedPct)&&Math.abs(pressureSignedPct)>1e-6)return null;
-  }
-
-  const scoreParts=[];
-  if(finite(compositionDelta)){
-    const scale=componentDiffs.reduce((sum,item)=>sum+Math.max(item.tolerance,.01),0)/componentDiffs.length;
-    scoreParts.push({value:compositionDelta/scale,weight:2});
-  }
-  if(finite(temperatureSigned))scoreParts.push({value:Math.abs(temperatureSigned)/Math.max(query.temperatureTolerance,.01),weight:1});
-  if(finite(pressureSignedPct))scoreParts.push({value:Math.abs(pressureSignedPct)/Math.max(query.pressureTolerance,.01),weight:1});
-  const weight=scoreParts.reduce((sum,item)=>sum+item.weight,0);
-  const score=weight?scoreParts.reduce((sum,item)=>sum+item.value*item.weight,0)/weight:0;
-
-  return {
-    score,
-    compositionDelta,
-    componentDiffs,
-    temperatureSigned,
-    pressureSignedPct,
-    extraComponents:Math.max(0,names.length-query.components.length)
-  };
-}
-function metricValue(result,key){
-  const m=result.metrics;
-  if(key==='composition')return finite(m.compositionDelta)?m.compositionDelta:Infinity;
-  if(key==='temperature')return finite(m.temperatureSigned)?Math.abs(m.temperatureSigned):Infinity;
-  if(key==='pressure')return finite(m.pressureSignedPct)?Math.abs(m.pressureSignedPct):Infinity;
-  if(key==='overall')return m.score;
-  return result.file.path||'';
-}
-function sortResults(results,query){
-  results.sort((a,b)=>{
-    if(query.sort==='path')return (a.file.path||'').localeCompare(b.file.path||'',undefined,{numeric:true});
-    const primary=metricValue(a,query.sort)-metricValue(b,query.sort);
-    if(Number.isFinite(primary)&&Math.abs(primary)>1e-12)return primary;
-    if(!Number.isFinite(primary)){
-      const av=metricValue(a,query.sort),bv=metricValue(b,query.sort);
-      if(av!==bv)return av===Infinity?1:-1;
-    }
-    const overall=a.metrics.score-b.metrics.score;
-    if(Math.abs(overall)>1e-12)return overall;
-    return (a.file.path||'').localeCompare(b.file.path||'',undefined,{numeric:true});
-  });
-}
+function evaluate(file,query){return searchCore.evaluate(file,query);}
+function sortResults(results,query){return searchCore.sortResults(results,query);}
 function modeLabel(mode){
   return mode==='range'?'Within range':mode==='exact'?'Exact':'Nearest';
 }
@@ -493,6 +386,17 @@ function qualityMarkup(file){
   }
   return '<span class="chip green">Ready</span>';
 }
+function coverageMarkup(file){
+  const coverage=file.coverage||{},dims=coverage.dimensions||{};
+  const ep=coverage.e_over_p_v_cm_torr||{},field=coverage.magnetic_field_t||{},angle=coverage.angle_rad||{};
+  const lines=[];
+  if(coverage.format_version)lines.push('Garfield v'+coverage.format_version+(coverage.gasok_bits?' · GASOK '+[...coverage.gasok_bits].filter(bit=>bit==='T').length+'/'+coverage.gasok_bits.length:''));
+  if(finite(ep.min)&&finite(ep.max))lines.push('E/p '+fmt(ep.min,4)+'–'+fmt(ep.max,4)+' V/(cm·Torr)');
+  if(finite(field.min)&&finite(field.max))lines.push('B '+fmt(field.min,4)+'–'+fmt(field.max,4)+' T');
+  if(finite(angle.min)&&finite(angle.max))lines.push('angle '+fmt(angle.min,4)+'–'+fmt(angle.max,4)+' rad');
+  if(dims.electric_field_count)lines.push(dims.electric_field_count+' E × '+dims.magnetic_field_count+' B × '+dims.angle_count+' angle');
+  return lines.join('<br>')||'Coverage unavailable';
+}
 function renderResults(results,query,invalid){
   el('shownFiles').textContent=results.length;
   el('activeMode').textContent=modeLabel(query.mode);
@@ -528,10 +432,13 @@ function renderResults(results,query,invalid){
       '<td class="components" data-label="Composition">'+componentMarkup(file)+'<div>'+qualityMarkup(file)+'</div></td>'+
       '<td class="condition" data-label="Conditions">'+conditions+'</td>'+
       '<td class="match" data-label="Match details">'+deltaMarkup(result.metrics,query)+'</td>'+
-      '<td class="file-cell" data-label="File"><div class="identifier">'+esc(file.identifier||file.file_name)+'</div><div class="path">'+esc(file.path)+'</div></td>'+
+      '<td class="condition" data-label="Coverage">'+coverageMarkup(file)+'</td>'+
+      '<td class="file-cell" data-label="File"><div class="identifier">'+esc(file.identifier||file.file_name)+'</div><div class="path">'+esc(file.path)+'</div><div class="status-line">'+(finite(file.size_bytes)?fmt(file.size_bytes/1024/1024,3)+' MB':'Size unknown')+'</div></td>'+
       '<td data-label="Actions"><div class="actions">'+
         '<a href="'+attr(encodeURI(file.path))+'" target="_blank" rel="noopener">Open</a>'+
         '<a href="'+attr(encodeURI(file.path))+'" download>Download</a>'+
+        '<a href="garfield_gas_workbench_pro_english.html?gas='+attr(encodeURIComponent(file.path))+'" target="_blank" rel="noopener">English workbench</a>'+
+        '<a href="garfield_gas_workbench_pro.html?gas='+attr(encodeURIComponent(file.path))+'" target="_blank" rel="noopener">中文工作台</a>'+
         '<button type="button" data-copy-path="'+attr(file.path)+'">Copy path</button>'+
       '</div></td>'+
     '</tr>';
@@ -663,7 +570,7 @@ function refreshComponentOptions(){
   });
 }
 function applyIndexData(data,refreshSelections){
-  if((data.schema_version||0)<2)throw new Error('schema v2 index required');
+  if((data.schema_version||0)<2)throw new Error('schema v2 or newer index required');
   state.files=data.files||[];
   state.schema=data.schema_version;
   state.components=Object.keys(data.summary?.component_counts||{}).sort((a,b)=>a.localeCompare(b));

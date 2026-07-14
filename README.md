@@ -6,7 +6,7 @@ GasFile_Viewer provides browser-based tools for viewing and searching Garfield++
 
 ## Available Tools
 
-- [Open Garfield Gas Workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html): open the English interface to load, compare, plot, analyze, and export data from one or more Garfield gas files.
+- [Open Garfield Gas Workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html): open the English interface to search the repository, load local or indexed gas files, compare, plot, analyze, and export data.
 - [Open Gas File Search](https://yiding1998.github.io/GasFile_Viewer/gas_file_search.html): search and rank indexed files by gas components, fractions, temperature, pressure, aliases, identifier, or path.
 
 ## Using Garfield Gas Workbench
@@ -17,9 +17,21 @@ Open the web application directly:
 
 [https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html)
 
-The workbench is a single-file web application. Drag one or more **.gas** files onto the page, or select them with the file picker, to inspect and compare their data. No installation or local web server is required for the online version.
+The workbench is a browser application. Drag one or more **.gas** files onto the page, or select them with the file picker, to inspect and compare their data. No installation or local web server is required for the online version.
 
-For offline use, download [garfield_gas_workbench_pro_english.html](garfield_gas_workbench_pro_english.html) and open it directly in a modern browser.
+### Search and Add Repository Files
+
+1. Select **Search repository gas files**.
+2. Search by gas components, fractions, temperature, pressure, quality, alias, or path.
+3. Review the Garfield version, GASOK availability, E/p range, magnetic-field range, angle range, grid dimensions, and file size.
+4. Select individual results, or use **Select top 3** / **Select top 5**.
+5. Select **Add selected files** to load them into the existing workbench file list.
+
+Downloads run with a concurrency limit and can be cancelled. Repository paths are restricted to indexed files under **GasFile/**, and downloaded content is checked against the index SHA-256 when the browser supports Web Crypto. Files already loaded from the same path or hash are skipped. Repository source, hash, index time, and indexed metadata are retained in saved workbench projects.
+
+The standalone search page also provides **English workbench** and **中文工作台** actions for opening a result directly in the selected interface.
+
+For offline use, download [garfield_gas_workbench_pro_english.html](garfield_gas_workbench_pro_english.html) and open it directly in a modern browser. Local file loading, plotting, analysis, and project operations remain available; repository search requires GitHub Pages or a local web server that also serves the repository files.
 
 ## User Manuals
 
@@ -92,7 +104,8 @@ Every result shows the composition difference in percentage points, temperature 
 - Select **Refresh index** to load the latest successfully deployed index without losing the current query. This refreshes the browser data and does not modify repository files.
 - Copy a shareable URL containing the current query.
 - Export the current result set as CSV.
-- Open, download, or copy the path of a gas file.
+- Open, download, copy the path, or send a gas file directly to the English or Chinese workbench.
+- Preview Garfield version, GASOK availability, E/p, magnetic-field, angle, grid, and file-size coverage.
 - Filter files that are fully ready for numeric matching or have data warnings.
 
 Nearest matching is a retrieval aid, not proof that a gas file is physically interchangeable with the requested conditions. Check the file's electric-field, magnetic-field, angle, and table coverage before using it in a simulation.
@@ -111,7 +124,7 @@ Repository maintainers can add files without running the index builder locally:
 4. Wait for the **Gas search validation and Pages deployment** workflow to finish.
 5. Open the search page and select **Refresh index**.
 
-The workflow tests the parser, scans the current **GasFile/** directory, generates a fresh schema v2 index, verifies it, and publishes that generated index with GitHub Pages. The committed **GasFile/gas_index.json** does not need to be updated for the online site.
+The workflow tests the parser, scans the current **GasFile/** directory, generates a fresh schema v3 index, verifies it, and publishes that generated index with GitHub Pages. The committed **GasFile/gas_index.json** does not need to be updated for the online site.
 
 ### Add Through Git
 
@@ -132,6 +145,6 @@ python3 tools/build_gas_index.py --pretty
 python3 tools/build_gas_index.py --check
 ~~~
 
-Review [GasFile/gas_index_report.md](GasFile/gas_index_report.md) when a file has warnings. The schema v2 index stores normalized values in **temperature_k**, **pressure_pa**, and **pressure_atm**, plus composition totals, data-quality flags, match readiness, file size, and SHA-256 hashes.
+Review [GasFile/gas_index_report.md](GasFile/gas_index_report.md) when a file has warnings. The schema v3 index stores normalized values in **temperature_k**, **pressure_pa**, and **pressure_atm**, plus composition totals, data-quality flags, match readiness, file size, SHA-256 hashes, Garfield format version, GASOK bits, grid dimensions, and E/p, magnetic-field, and angle ranges.
 
 The builder prefers each file's internal **Identifier:** line, for example **Ar 90%, CO2 10%, T=293.15 K, p=1 atm**. Irregular file names therefore remain searchable by actual content. Add special corrections to [GasFile/gas_metadata_override.json](GasFile/gas_metadata_override.json), and maintain component aliases in [GasFile/gas_aliases.json](GasFile/gas_aliases.json).

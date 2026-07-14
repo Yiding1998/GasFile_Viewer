@@ -1,8 +1,8 @@
 # Gas File Index Report
 
-Schema version: **2**
+Schema version: **3**
 
-Generated at UTC: `2026-07-14T09:29:30+00:00`
+Generated at UTC: `2026-07-14T12:15:42+00:00`
 
 Total indexed files: **435**
 

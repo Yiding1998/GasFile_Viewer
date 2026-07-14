@@ -1,0 +1,47 @@
+from __future__ import annotations
+
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class WorkbenchLibraryContractTests(unittest.TestCase):
+    def read(self, name: str) -> str:
+        return (ROOT / name).read_text(encoding="utf-8")
+
+    def test_both_localized_workbenches_load_the_shared_library(self) -> None:
+        for name, language in [
+            ("garfield_gas_workbench_pro.html", "zh-CN"),
+            ("garfield_gas_workbench_pro_english.html", "en"),
+        ]:
+            html = self.read(name)
+            self.assertIn(f'<html lang="{language}">', html)
+            self.assertIn("window.GarfieldWorkbenchBridge", html)
+            self.assertIn('src="gas-search-core.js"', html)
+            self.assertIn('src="workbench-library.js"', html)
+            self.assertIn("sourceSha256", html)
+            self.assertIn("sourcePath", html)
+            self.assertIn("file.arrayBuffer()", html)
+
+    def test_library_limits_remote_paths_and_verifies_content(self) -> None:
+        script = self.read("workbench-library.js")
+        self.assertIn("file.path.startsWith('GasFile/')", script)
+        self.assertIn("file.path.includes('..')", script)
+        self.assertIn("url.origin!==location.origin", script)
+        self.assertIn("crypto.subtle.digest('SHA-256'", script)
+        self.assertIn("response.arrayBuffer()", script)
+        self.assertIn("200*1024*1024", script)
+        self.assertIn("AbortController", script)
+
+    def test_standalone_search_uses_shared_core_and_links_both_workbenches(self) -> None:
+        html = self.read("gas_file_search.html")
+        self.assertIn('src="gas-search-core.js"', html)
+        self.assertIn("searchCore.evaluate", html)
+        self.assertIn("searchCore.sortResults", html)
+        self.assertIn("garfield_gas_workbench_pro_english.html?gas=", html)
+        self.assertIn("garfield_gas_workbench_pro.html?gas=", html)
+
+
+if __name__ == "__main__":
+    unittest.main()

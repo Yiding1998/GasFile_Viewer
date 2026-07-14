@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 ATM_IN_PA = 101_325.0
 COMPOSITION_SUM_TOLERANCE = 0.05
 SKIP_NAMES = {
@@ -45,6 +45,16 @@ PATH_TEMPERATURE_RE = re.compile(
     r"([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*(k|c|degc|celsius)\b",
     re.IGNORECASE,
 )
+FLOAT_TOKEN_RE = re.compile(
+    r"[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+))(?:[EeDd][+-]?\d+)?"
+)
+DIMENSION_RE = re.compile(
+    r"^\s*Dimension\s*:\s*([TF])\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)",
+    re.IGNORECASE | re.MULTILINE,
+)
+VERSION_RE = re.compile(r"^\s*Version\s*:\s*(\d+)", re.IGNORECASE | re.MULTILINE)
+GASOK_RE = re.compile(r"^\s*GASOK\s+bits\s*:\s*([TF]+)", re.IGNORECASE | re.MULTILINE)
+
 PRESSURE_FACTORS_PA = {
     "pa": 1.0,
     "kpa": 1_000.0,
@@ -65,6 +75,82 @@ def compact_number(value: float) -> int | float:
     if math.isclose(value, round(value), abs_tol=1e-12):
         return int(round(value))
     return float(f"{value:.12g}")
+
+
+def parse_float_tokens(value: str) -> list[float]:
+    return [
+        float(token.replace("D", "E").replace("d", "e"))
+        for token in FLOAT_TOKEN_RE.findall(value or "")
+    ]
+
+
+def extract_grid_values(
+    text: str,
+    start_pattern: str,
+    end_pattern: str,
+    expected_count: int,
+) -> list[float]:
+    match = re.search(
+        start_pattern + r"\s*:?(.*?)" + end_pattern,
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if not match:
+        return []
+    return parse_float_tokens(match.group(1))[:expected_count]
+
+
+def numeric_range(values: list[float], scale: float = 1.0) -> dict[str, int | float] | None:
+    finite_values = [value * scale for value in values if math.isfinite(value)]
+    if not finite_values:
+        return None
+    return {
+        "min": compact_number(min(finite_values)),
+        "max": compact_number(max(finite_values)),
+    }
+
+
+def parse_transport_coverage(text: str) -> dict[str, Any]:
+    dimension = DIMENSION_RE.search(text)
+    if not dimension:
+        return {}
+
+    map_2d = dimension.group(1).upper() == "T"
+    electric_count, angle_count, magnetic_count, excitation_count, ionisation_count = (
+        int(dimension.group(index)) for index in range(2, 7)
+    )
+    electric = extract_grid_values(
+        text, r"\bE\s+fields\b", r"\bE-B\s+angles\b", electric_count
+    )
+    angles = extract_grid_values(
+        text, r"\bE-B\s+angles\b", r"\bB\s+fields\b", angle_count
+    )
+    magnetic_raw = extract_grid_values(
+        text, r"\bB\s+fields\b", r"\bMixture\s*:", magnetic_count
+    )
+    version_match = VERSION_RE.search(text)
+    gasok_match = GASOK_RE.search(text)
+
+    coverage: dict[str, Any] = {
+        "format_version": int(version_match.group(1)) if version_match else None,
+        "map_2d": map_2d,
+        "gasok_bits": gasok_match.group(1).upper() if gasok_match else "",
+        "dimensions": {
+            "electric_field_count": electric_count,
+            "angle_count": angle_count,
+            "magnetic_field_count": magnetic_count,
+            "excitation_count": excitation_count,
+            "ionisation_count": ionisation_count,
+        },
+    }
+    ranges = {
+        "e_over_p_v_cm_torr": numeric_range(electric),
+        "angle_rad": numeric_range(angles),
+        # Garfield stores this grid in units where dividing by 100 gives tesla.
+        "magnetic_field_t": numeric_range(magnetic_raw, scale=0.01),
+    }
+    coverage.update({key: value for key, value in ranges.items() if value is not None})
+    return coverage
 
 
 def load_aliases(path: Path) -> tuple[dict[str, str], list[str]]:
@@ -336,6 +422,7 @@ def build_index(root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
                 "error": str(exc),
                 "size_bytes": path.stat().st_size if path.exists() else None,
                 "sha256": "",
+                "coverage": {},
             }
             records.append(finalize_record(record, alias_to_canonical))
             continue
@@ -364,6 +451,7 @@ def build_index(root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
             "source": source,
             "size_bytes": path.stat().st_size,
             "sha256": sha256,
+            "coverage": parse_transport_coverage(text),
         }
         if path_text in overrides:
             record = apply_override(record, overrides[path_text])
