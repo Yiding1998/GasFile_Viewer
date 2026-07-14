@@ -6,8 +6,20 @@ GasFile_Viewer provides browser-based tools for viewing and searching Garfield++
 
 ## Available Tools
 
-- [Garfield Gas Workbench](garfield_gas_workbench_pro.html): download the HTML file and open it directly in a browser to inspect a gas file.
-- [Gas File Search](gas_file_search.html): search and rank indexed files by gas components, fractions, temperature, pressure, aliases, identifier, or path.
+- [Open Garfield Gas Workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro.html): load, compare, plot, analyze, and export data from one or more Garfield gas files.
+- [Open Gas File Search](https://yiding1998.github.io/GasFile_Viewer/gas_file_search.html): search and rank indexed files by gas components, fractions, temperature, pressure, aliases, identifier, or path.
+
+## Using Garfield Gas Workbench
+
+### Online with GitHub Pages
+
+Open the web application directly:
+
+[https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro.html](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro.html)
+
+The workbench is a single-file web application. Drag one or more **.gas** files onto the page, or select them with the file picker, to inspect and compare their data. No installation or local web server is required for the online version.
+
+For offline use, download [garfield_gas_workbench_pro.html](garfield_gas_workbench_pro.html) and open it directly in a modern browser.
 
 ## User Manuals
 
