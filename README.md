@@ -6,6 +6,7 @@ GasFile_Viewer provides browser-based tools for viewing and searching Garfield++
 
 ## Available Tools
 
+- [Quick Start: Click and Use](QUICK_START.md#english): no installation or setup, with Chinese and English in one document.
 - [Open Garfield Gas Workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html): open the English interface to search the repository, load local or indexed gas files, compare, plot, analyze, and export data.
 - [Open Gas File Search](https://yiding1998.github.io/GasFile_Viewer/gas_file_search.html): search and rank indexed files by gas components, fractions, temperature, pressure, aliases, identifier, or path.
 
@@ -51,6 +52,13 @@ The same documents can be opened from GitHub:
 - [English User Manual (PDF)](Doc/Garfield_gas_workbench_pro_User_Manual_EN.pdf)
 - [Chinese User Manual (Markdown)](Doc/Garfield_gas_workbench_pro_%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.md)
 - [Chinese User Manual (PDF)](Doc/Garfield_gas_workbench_pro_%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.pdf)
+
+## Project and Developer Documentation
+
+- [Project Structure and File Guide (short)](Doc/Project_Structure_and_File_Guide_EN.md): a quick map of directories, major files, generated outputs, and common maintenance entry points.
+- [Code Design and Implementation Guide (detailed)](Doc/Code_Design_and_Implementation_EN.md): architecture, indexing, matching, workbench parsing and plotting, data formats, tests, deployment, and extension patterns.
+- [中文项目结构与文件说明](Doc/%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E.md)
+- [中文代码设计与实现说明](Doc/%E4%BB%A3%E7%A0%81%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%B4%E6%98%8E.md)
 
 ## Using Gas File Search
 

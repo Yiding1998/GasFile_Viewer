@@ -1,28 +1,29 @@
 {
   "schema_version": 3,
   "summary": {
-    "generated_at_utc": "2026-07-14T12:15:42+00:00",
-    "total_files": 435,
-    "match_ready_files": 434,
+    "generated_at_utc": "2026-07-14T13:55:27+00:00",
+    "total_files": 441,
+    "match_ready_files": 440,
     "status_counts": {
       "fallback": 1,
-      "ok": 434
+      "ok": 440
     },
     "quality_flag_counts": {
       "missing_component_fraction": 1
     },
     "component_counts": {
       "iC4H10": 237,
-      "Ar": 195,
+      "Ar": 201,
       "C2H2F4": 187,
       "SF6": 181,
       "CO2": 76,
       "CF4": 50,
-      "CH4": 40,
+      "CH4": 46,
       "Ne": 40,
       "C2H6": 26,
       "DME": 24,
       "CF3Br": 13,
+      "O2": 3,
       "C2F6": 1,
       "C3F8": 1,
       "C3H6": 1,
@@ -11183,6 +11184,399 @@
       "match_ready": true,
       "parse_status": "ok",
       "search_text": "gasfile/ar/other_gas_mixtures/ar_90_sf6_5_ic4h10_5.gas ar 90%, sf6 5%, ic4h10 5%, t=293.15 k, p=1 atm ar + sf6 + ic4h10 argon i-c4h10 isobutane isoc4h10 sulfur hexafluoride 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/Ar/Other_Gas_Mixtures/ar_90_ch4_10_760Torr.gas",
+      "file_name": "ar_90_ch4_10_760Torr.gas",
+      "directory": "GasFile/Ar/Other_Gas_Mixtures",
+      "identifier": "Ar 90%, CH4 10%, T=293.15 K, p=1 atm",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 90
+        },
+        {
+          "name": "CH4",
+          "fraction": 10
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier",
+      "size_bytes": 105747,
+      "sha256": "c282b247abd849cc517a8311d7ff2d06c9b2b80b9d41367f47b451150f61cebe",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTTTTTTFFFTTFFFF",
+        "dimensions": {
+          "electric_field_count": 30,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 69,
+          "ionisation_count": 16
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0,
+          "max": 1.97368421
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "CH4"
+      ],
+      "component_key": "Ar + CH4",
+      "component_aliases": [
+        "argon",
+        "methane"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_760torr.gas ar 90%, ch4 10%, t=293.15 k, p=1 atm ar + ch4 argon methane 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/Ar/Other_Gas_Mixtures/ar_90_ch4_10_O2_100ppm_830mbar.gas",
+      "file_name": "ar_90_ch4_10_O2_100ppm_830mbar.gas",
+      "directory": "GasFile/Ar/Other_Gas_Mixtures",
+      "identifier": "Ar 90%, CH4 10%, T=293.15 K, p=0.819348 atm",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 90
+        },
+        {
+          "name": "CH4",
+          "fraction": 10
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "0.819348 atm",
+      "source": "identifier",
+      "size_bytes": 105747,
+      "sha256": "aad3c13e7f36e236c6262f296db9c7ffa1b467837feba5d48d0be9b04e92db27",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTTTTTTFFFTTFFFF",
+        "dimensions": {
+          "electric_field_count": 30,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 69,
+          "ionisation_count": 16
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0160589727,
+          "max": 3.21179455
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "CH4"
+      ],
+      "component_key": "Ar + CH4",
+      "component_aliases": [
+        "argon",
+        "methane"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 83020.4361,
+      "pressure_atm": 0.819348,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_100ppm_830mbar.gas ar 90%, ch4 10%, t=293.15 k, p=0.819348 atm ar + ch4 argon methane 293.15 k 0.819348 atm"
+    },
+    {
+      "path": "GasFile/Ar/Other_Gas_Mixtures/ar_90_ch4_10_O2_20ppm.gas",
+      "file_name": "ar_90_ch4_10_O2_20ppm.gas",
+      "directory": "GasFile/Ar/Other_Gas_Mixtures",
+      "identifier": "Ar 89.9982%, CH4 9.9998%, O2 0.002%, T=293.15 K, p=1 atm",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 89.9982
+        },
+        {
+          "name": "CH4",
+          "fraction": 9.9998
+        },
+        {
+          "name": "O2",
+          "fraction": 0.002
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier",
+      "size_bytes": 80453,
+      "sha256": "59cdf6e14015058c43374f6c2d2a624f03b4631b0b094e7354300e68df7af758",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTTTTTTFFFTTFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 69,
+          "ionisation_count": 24
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 0.671052632
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "CH4",
+        "O2"
+      ],
+      "component_key": "Ar + CH4 + O2",
+      "component_aliases": [
+        "argon",
+        "methane"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_20ppm.gas ar 89.9982%, ch4 9.9998%, o2 0.002%, t=293.15 k, p=1 atm ar + ch4 + o2 argon methane 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/Ar/Other_Gas_Mixtures/ar_90_ch4_10_O2_20ppm_830mbar.gas",
+      "file_name": "ar_90_ch4_10_O2_20ppm_830mbar.gas",
+      "directory": "GasFile/Ar/Other_Gas_Mixtures",
+      "identifier": "Ar 90%, CH4 10%, T=293.15 K, p=0.819348 atm",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 90
+        },
+        {
+          "name": "CH4",
+          "fraction": 10
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "0.819348 atm",
+      "source": "identifier",
+      "size_bytes": 105747,
+      "sha256": "804eb45ac2cb28d0b82b5dc5ccc23555ceac0a2ef51b1c66ca420de3ddbd3c83",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTTTTTTFFFTTFFFF",
+        "dimensions": {
+          "electric_field_count": 30,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 69,
+          "ionisation_count": 16
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0160589727,
+          "max": 3.21179455
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "CH4"
+      ],
+      "component_key": "Ar + CH4",
+      "component_aliases": [
+        "argon",
+        "methane"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 83020.4361,
+      "pressure_atm": 0.819348,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_20ppm_830mbar.gas ar 90%, ch4 10%, t=293.15 k, p=0.819348 atm ar + ch4 argon methane 293.15 k 0.819348 atm"
+    },
+    {
+      "path": "GasFile/Ar/Other_Gas_Mixtures/ar_90_ch4_10_O2_300ppm.gas",
+      "file_name": "ar_90_ch4_10_O2_300ppm.gas",
+      "directory": "GasFile/Ar/Other_Gas_Mixtures",
+      "identifier": "Ar 89.973%, CH4 9.997%, O2 0.03%, T=293.15 K, p=1 atm",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 89.973
+        },
+        {
+          "name": "CH4",
+          "fraction": 9.997
+        },
+        {
+          "name": "O2",
+          "fraction": 0.03
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier",
+      "size_bytes": 80453,
+      "sha256": "69d849141ea0d40b55688820bcc5790e925ac39985d496e19c638c51a43d875d",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTTTTTTFFFTTFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 69,
+          "ionisation_count": 24
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 0.671052632
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "CH4",
+        "O2"
+      ],
+      "component_key": "Ar + CH4 + O2",
+      "component_aliases": [
+        "argon",
+        "methane"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_300ppm.gas ar 89.973%, ch4 9.997%, o2 0.03%, t=293.15 k, p=1 atm ar + ch4 + o2 argon methane 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/Ar/Other_Gas_Mixtures/ar_90_ch4_10_O2_500ppm.gas",
+      "file_name": "ar_90_ch4_10_O2_500ppm.gas",
+      "directory": "GasFile/Ar/Other_Gas_Mixtures",
+      "identifier": "Ar 89.955%, CH4 9.995%, O2 0.05%, T=293.15 K, p=1 atm",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 89.955
+        },
+        {
+          "name": "CH4",
+          "fraction": 9.995
+        },
+        {
+          "name": "O2",
+          "fraction": 0.05
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier",
+      "size_bytes": 80453,
+      "sha256": "b0fc4439ee5078797c6f56d095159f907f3fb821cf2a89e66cb3e4a93c01cac3",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTTTTTTFFFTTFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 69,
+          "ionisation_count": 24
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 0.671052632
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "CH4",
+        "O2"
+      ],
+      "component_key": "Ar + CH4 + O2",
+      "component_aliases": [
+        "argon",
+        "methane"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_500ppm.gas ar 89.955%, ch4 9.995%, o2 0.05%, t=293.15 k, p=1 atm ar + ch4 + o2 argon methane 293.15 k 1 atm"
     },
     {
       "path": "GasFile/Ar/Other_Gas_Mixtures/ar_93_co2_7.gas",

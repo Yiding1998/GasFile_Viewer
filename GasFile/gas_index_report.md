@@ -2,16 +2,16 @@
 
 Schema version: **3**
 
-Generated at UTC: `2026-07-14T12:15:42+00:00`
+Generated at UTC: `2026-07-14T13:55:27+00:00`
 
-Total indexed files: **435**
+Total indexed files: **441**
 
-Ready for numeric matching: **434**
+Ready for numeric matching: **440**
 
 ## Parse Status
 
 - `fallback`: 1
-- `ok`: 434
+- `ok`: 440
 
 ## Data Quality Flags
 
@@ -20,16 +20,17 @@ Ready for numeric matching: **434**
 ## Component Counts
 
 - `iC4H10`: 237
-- `Ar`: 195
+- `Ar`: 201
 - `C2H2F4`: 187
 - `SF6`: 181
 - `CO2`: 76
 - `CF4`: 50
-- `CH4`: 40
+- `CH4`: 46
 - `Ne`: 40
 - `C2H6`: 26
 - `DME`: 24
 - `CF3Br`: 13
+- `O2`: 3
 - `C2F6`: 1
 - `C3F8`: 1
 - `C3H6`: 1
