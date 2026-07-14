@@ -31,6 +31,12 @@ Downloads run with a concurrency limit and can be cancelled. Repository paths ar
 
 The standalone search page also provides **English workbench** and **中文工作台** actions for opening a result directly in the selected interface.
 
+### Plot Transport Parameters on the X Axis
+
+The X-axis selector includes the three field coordinates and every built-in or user-defined transport parameter available to the Y axes. Parametric curves preserve the original electric-field sweep by default, with an optional ascending-X order or points-only display. Common-grid and reference-file calculations remain aligned on the underlying E/p coordinate to avoid invalid inversion of non-monotonic parameters.
+
+Tooltips, synchronized readout, and CSV exports retain the source E, E/p, E/N, magnetic field, and angle for every point. Horizontal parameter uncertainty bars are available when the selected X parameter has uncertainty data. Plot templates and complete project files preserve the X parameter, point order, and uncertainty settings.
+
 For offline use, download [garfield_gas_workbench_pro_english.html](garfield_gas_workbench_pro_english.html) and open it directly in a modern browser. Local file loading, plotting, analysis, and project operations remain available; repository search requires GitHub Pages or a local web server that also serves the repository files.
 
 ## User Manuals

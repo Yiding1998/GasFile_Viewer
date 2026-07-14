@@ -241,11 +241,14 @@ This report is the first place to check when a parameter is missing from the Y-a
 
 ## 6.1 X-Axis Variables
 
-Three X-axis variables are supported:
+The X-axis selector contains:
 
 - Actual electric field `E [V/cm]`
 - Reduced electric field `E/p [V/(cm*Torr)]`
 - Reduced electric field `E/N [Td]`
+- Every built-in transport parameter available to the left and right Y axes
+- User-defined derived parameters
+- Individual excitation and ionization channels available in the active file
 
 The conversions are:
 
@@ -258,6 +261,10 @@ E/N=\frac{E}{N}.
 $$
 
 `E/N` is displayed in townsend, where `1 Td = 10^{-21} V*m^2`.
+
+Selecting a transport parameter for X creates a parametric plot of one transport quantity against another. Points follow the original electric-field sweep by default, preserving curve structure when the selected X parameter is non-monotonic. The order can be changed to ascending X, or the connection mode can be set to points only.
+
+The same parameter may be selected for X and Y, which normally produces `y=x`. Records with an invalid X or Y value are skipped, and the main-plot note reports the skipped count.
 
 ## 6.2 Magnetic-Field and Angle Slices
 
@@ -317,11 +324,11 @@ $$
 \widetilde y_i(x)=\frac{y_i(x)}{y_i(x_0)}.
 $$
 
-Enter `x0` in **Normalization X Value**. If `x0` is not an original grid point, the current interpolation method is used to obtain the normalization value.
+Enter `x0` in **Normalization X Value**. For a field-coordinate X axis, the current interpolation method is used when `x0` is not a native grid point. For a transport-parameter X axis, the nearest native parameter point is used to avoid non-unique inversion of a non-monotonic parameter.
 
 ## 6.5 Reference File
 
-Difference, percentage, and ratio modes require a reference file. The reference file should cover the X range of the files being compared. Otherwise, some points cannot be calculated.
+Difference, percentage, and ratio modes require a reference file. With a field-coordinate X axis, the reference file should cover the compared X range. With a transport-parameter X axis, files are aligned on the underlying `E/p` coordinate before reference differences, percentages, or ratios are calculated.
 
 ## 6.6 Common X Grid
 
@@ -335,6 +342,8 @@ Available choices are:
 
 For ratio, difference, and consistent point-by-point comparison, the reference-file grid or a custom grid is usually recommended.
 
+When a transport parameter is used for X, the reference, union, common, and custom grids all refer to the underlying `E/p` grid. The application processes both X and Y parameters on that grid before constructing the parametric curve. Custom grid start, end, and step values therefore use the `E/p` coordinate.
+
 ## 6.7 Interpolation Methods
 
 ### Linear Interpolation
@@ -343,7 +352,7 @@ Interpolate linearly between neighboring data points.
 
 ### Logarithmic-X Interpolation
 
-Interpolate in `log10(x)` space. This is useful when the positive X values span several orders of magnitude. All X values must be positive.
+Interpolate in logarithmic coordinate space. With a transport-parameter X axis, interpolation uses the underlying positive `E/p` coordinate rather than directly interpolating a potentially non-monotonic transport parameter.
 
 ### No Interpolation - Common Original Points Only
 
@@ -360,22 +369,31 @@ Supported modes:
 - Step plot
 - Smoothed visual curve
 
+**Parametric Point Order** provides:
+
+- **Original Electric-Field Sweep** - the default; preserves the physical order as the field increases.
+- **Ascending X Value** - useful when the intended presentation explicitly requires X sorting.
+- **Native Points Only** - selected through the curve-connection control and draws no connecting line.
+
 The smoothed curve is for presentation only. It is not a new Garfield++ calculation. Statistics, exported data, and quantitative conclusions should preferentially use original points or explicitly generated interpolation points.
 
 ## 6.9 File Uncertainties
 
 If the `.gas` format contains uncertainty information, the program can display:
 
-- Error bars
-- Error bands
-- Error bars and bands together
+- Y error bars
+- Y error bands
+- Y error bars and bands together
+- Horizontal error bars for a transport parameter selected as X
 
-Uncertainties are shown only in **Original Values** mode. Some parameters and some gas-table versions do not contain uncertainty information.
+Y uncertainties are shown only in **Original Values** mode. Horizontal bars are unavailable for field-coordinate X axes or parameters without uncertainty data. Some derived parameters and gas-table versions do not contain uncertainty information.
 
 ## 6.10 Point Labels and Crosshair Readout
 
 - **Show Point Labels** displays selected numeric labels rather than labeling every point when curves are dense.
 - **Crosshair and Synchronized Readout** displays values from multiple curves near the cursor position.
+- Parametric X axes use the nearest plotted point rather than attempting inverse interpolation of a non-monotonic parameter.
+- Tooltips and synchronized readout also show the source `E`, `E/p`, magnetic field, and angle.
 
 # 7. Main Plot Settings: Axes and Titles
 
@@ -926,9 +944,10 @@ The current-data CSV includes:
 - Identifier
 - Pressure
 - Temperature
-- X variable and value
-- Parameter name and value
-- Uncertainty
+- X and Y parameter names, units, and values
+- X and Y uncertainties
+- Source E, E/p, E/N, magnetic field, and angle for every point
+- Parametric point order
 - Interpolated-point flag
 
 The CSV reflects the current main-plot processing state, including comparison mode, common grid, and interpolation settings.

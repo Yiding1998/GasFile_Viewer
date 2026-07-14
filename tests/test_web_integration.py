@@ -34,6 +34,22 @@ class WorkbenchLibraryContractTests(unittest.TestCase):
         self.assertIn("200*1024*1024", script)
         self.assertIn("AbortController", script)
 
+    def test_transport_parameters_can_drive_the_x_axis(self) -> None:
+        for name in [
+            "garfield_gas_workbench_pro.html",
+            "garfield_gas_workbench_pro_english.html",
+        ]:
+            html = self.read(name)
+            self.assertEqual(html.count('id="pointOrder"'), 1)
+            self.assertEqual(html.count('id="showXErrors"'), 1)
+            self.assertIn("appendParamGroup($('xSelect')", html)
+            self.assertIn("parametric?'sourceEoverP':'x'", html)
+            self.assertIn("xErr:parametric?getErr", html)
+            self.assertIn("nearestByX(item.points,x)", html)
+            self.assertIn("'source_E_V_cm'", html)
+            self.assertIn("'source_E_over_P'", html)
+            self.assertIn("'pointOrder','showErrors','showXErrors'", html)
+
     def test_standalone_search_uses_shared_core_and_links_both_workbenches(self) -> None:
         html = self.read("gas_file_search.html")
         self.assertIn('src="gas-search-core.js"', html)
