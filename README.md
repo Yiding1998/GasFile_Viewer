@@ -77,7 +77,8 @@ Every result shows the composition difference in percentage points, temperature 
 
 - Sort by overall, composition, temperature, pressure, or path.
 - Search aliases such as R134a, C2H2F4, isobutane, and i-C4H10.
-- Refresh the deployed index without losing the current query.\n- Copy a shareable URL containing the current query.
+- Select **Refresh index** to load the latest successfully deployed index without losing the current query. This refreshes the browser data and does not modify repository files.
+- Copy a shareable URL containing the current query.
 - Export the current result set as CSV.
 - Open, download, or copy the path of a gas file.
 - Filter files that are fully ready for numeric matching or have data warnings.
