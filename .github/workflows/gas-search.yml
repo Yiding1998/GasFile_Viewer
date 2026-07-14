@@ -30,7 +30,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
+  validate-and-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,22 +39,27 @@ jobs:
           python-version: "3.11"
       - name: Test index builder
         run: python3 -m unittest discover -s tests -v
-      - name: Verify committed index
+      - name: Build deployment index from gas files
+        run: python3 tools/build_gas_index.py --pretty
+      - name: Verify generated index
         run: python3 tools/build_gas_index.py --check
+      - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+      - name: Upload generated Pages site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
 
   deploy:
     if: github.event_name != 'pull_request'
-    needs: validate
+    needs: validate-and-build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: "."
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

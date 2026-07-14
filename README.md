@@ -30,7 +30,7 @@ After GitHub Pages has been configured, open:
 
 [https://yiding1998.github.io/GasFile_Viewer/gas_file_search.html](https://yiding1998.github.io/GasFile_Viewer/gas_file_search.html)
 
-The repository includes [a GitHub Actions workflow](.github/workflows/gas-search.yml) that validates the index and deploys the site. The repository owner must select **Settings -> Pages -> Source -> GitHub Actions** once. Later pushes to **main** are validated and deployed automatically.
+The repository includes [a GitHub Actions workflow](.github/workflows/gas-search.yml) that rebuilds the index directly from **GasFile/** before every deployment. Select **Settings -> Pages -> Source -> GitHub Actions** once to use a single deployment path. New gas files pushed or uploaded to **main** are then tested, indexed, and published automatically.
 
 Do not use the GitHub source-code preview of **gas_file_search.html** as the search application. The page must be served through GitHub Pages or a local web server so that it can load [GasFile/gas_index.json](GasFile/gas_index.json).
 
@@ -77,7 +77,7 @@ Every result shows the composition difference in percentage points, temperature 
 
 - Sort by overall, composition, temperature, pressure, or path.
 - Search aliases such as R134a, C2H2F4, isobutane, and i-C4H10.
-- Copy a shareable URL containing the current query.
+- Refresh the deployed index without losing the current query.\n- Copy a shareable URL containing the current query.
 - Export the current result set as CSV.
 - Open, download, or copy the path of a gas file.
 - Filter files that are fully ready for numeric matching or have data warnings.
@@ -88,24 +88,37 @@ Regular users do not need to rebuild the index. They only need the latest reposi
 
 ## Adding New Gas Files
 
-Place new files under **GasFile/**, then rebuild the index from the repository root:
+### Upload Through GitHub
+
+Repository maintainers can add files without running the index builder locally:
+
+1. Open the **GasFile/** directory on GitHub.
+2. Select **Add file -> Upload files**.
+3. Upload the new Garfield gas files and commit them to **main**.
+4. Wait for the **Gas search validation and Pages deployment** workflow to finish.
+5. Open the search page and select **Refresh index**.
+
+The workflow tests the parser, scans the current **GasFile/** directory, generates a fresh schema v2 index, verifies it, and publishes that generated index with GitHub Pages. The committed **GasFile/gas_index.json** does not need to be updated for the online site.
+
+### Add Through Git
 
 ~~~bash
-python3 tools/build_gas_index.py --pretty
-~~~
-
-Review [GasFile/gas_index_report.md](GasFile/gas_index_report.md), run the tests and consistency check, then commit the new files and regenerated index:
-
-~~~bash
-python3 -m unittest discover -s tests -v
-python3 tools/build_gas_index.py --check
-git add GasFile tools tests .github README.md README.zh-CN.md gas_file_search.html
-git commit -m "Update gas files and search index"
+git add GasFile/
+git commit -m "Add gas files"
 git push origin main
 ~~~
 
-The schema v2 index stores normalized values in **temperature_k**, **pressure_pa**, and **pressure_atm** while preserving the original text. It also records composition totals, data-quality flags, match readiness, file size, and SHA-256 content hashes.
+The same workflow automatically regenerates and deploys the online index after the push. It can also be started manually from **Actions -> Gas search validation and Pages deployment -> Run workflow**.
 
-The builder prefers each file's internal **Identifier:** line, for example **Ar 90%, CO2 10%, T=293.15 K, p=1 atm**. Irregular file names therefore remain searchable by actual content. Files that cannot be fully parsed are listed in [GasFile/gas_index_report.md](GasFile/gas_index_report.md). Add special corrections to [GasFile/gas_metadata_override.json](GasFile/gas_metadata_override.json), and maintain component aliases in [GasFile/gas_aliases.json](GasFile/gas_aliases.json).
+### Refresh a Local Clone
 
-GitHub Actions rejects a stale committed index and deploys the validated search site after changes reach **main**.
+The deployment workflow does not create an automatic bot commit. To use newly added files in a local clone, rebuild the local index before starting the web server:
+
+~~~bash
+python3 tools/build_gas_index.py --pretty
+python3 tools/build_gas_index.py --check
+~~~
+
+Review [GasFile/gas_index_report.md](GasFile/gas_index_report.md) when a file has warnings. The schema v2 index stores normalized values in **temperature_k**, **pressure_pa**, and **pressure_atm**, plus composition totals, data-quality flags, match readiness, file size, and SHA-256 hashes.
+
+The builder prefers each file's internal **Identifier:** line, for example **Ar 90%, CO2 10%, T=293.15 K, p=1 atm**. Irregular file names therefore remain searchable by actual content. Add special corrections to [GasFile/gas_metadata_override.json](GasFile/gas_metadata_override.json), and maintain component aliases in [GasFile/gas_aliases.json](GasFile/gas_aliases.json).

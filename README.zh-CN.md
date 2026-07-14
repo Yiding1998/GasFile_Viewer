@@ -30,7 +30,7 @@ GitHub Pages 配置完成后，可以直接访问：
 
 [https://yiding1998.github.io/GasFile_Viewer/gas_file_search.html](https://yiding1998.github.io/GasFile_Viewer/gas_file_search.html)
 
-仓库已经包含[自动验证和发布工作流](.github/workflows/gas-search.yml)。仓库所有者只需首次进入 **Settings -> Pages -> Source** 并选择 **GitHub Actions**。此后推送到 **main** 的更新会自动验证并发布。
+仓库已经包含[自动验证和发布工作流](.github/workflows/gas-search.yml)，每次发布前都会直接扫描 **GasFile/** 并重新生成索引。首次进入 **Settings -> Pages -> Source** 并选择 **GitHub Actions**，即可只保留一条发布路径。此后推送或上传到 **main** 的新气体文件会自动测试、建立索引并发布。
 
 不要把 GitHub 中 **gas_file_search.html** 的源代码预览页面当作检索程序使用。检索页面必须通过 GitHub Pages 或本地网页服务器打开，才能读取 [GasFile/gas_index.json](GasFile/gas_index.json)。
 
@@ -77,7 +77,7 @@ http://127.0.0.1:8000/gas_file_search.html
 
 - 按综合差异、比例差异、温度差异、压强差异或路径排序。
 - 使用 R134a、C2H2F4、isobutane、i-C4H10 等别名检索。
-- 复制包含当前检索条件的共享链接。
+- 在不丢失当前检索条件的情况下刷新在线索引。\n- 复制包含当前检索条件的共享链接。
 - 将当前结果导出为 CSV。
 - 打开、下载或复制气体文件路径。
 - 筛选可完整参与数值匹配的文件或存在数据警告的文件。
@@ -88,24 +88,37 @@ http://127.0.0.1:8000/gas_file_search.html
 
 ## 新增气体文件
 
-将新文件放入 **GasFile/** 目录，然后在仓库根目录重新生成索引：
+### 通过 GitHub 网页上传
+
+仓库维护者无需在本地运行索引生成器：
+
+1. 在 GitHub 中打开 **GasFile/** 目录。
+2. 选择 **Add file -> Upload files**。
+3. 上传新的 Garfield 气体文件并提交到 **main**。
+4. 等待 **Gas search validation and Pages deployment** 工作流完成。
+5. 打开检索页面并点击 **Refresh index**。
+
+工作流会测试解析程序、扫描当前 **GasFile/**、生成全新的 schema v2 索引、执行一致性检查，并将生成后的索引随 GitHub Pages 一起发布。在线检索不要求事先更新仓库中的 **GasFile/gas_index.json**。
+
+### 通过 Git 添加
 
 ~~~bash
-python3 tools/build_gas_index.py --pretty
-~~~
-
-检查 [GasFile/gas_index_report.md](GasFile/gas_index_report.md)，运行测试和一致性检查，然后提交新增文件和重新生成的索引：
-
-~~~bash
-python3 -m unittest discover -s tests -v
-python3 tools/build_gas_index.py --check
-git add GasFile tools tests .github README.md README.zh-CN.md gas_file_search.html
-git commit -m "Update gas files and search index"
+git add GasFile/
+git commit -m "Add gas files"
 git push origin main
 ~~~
 
-schema v2 索引在保留原始文本的同时，新增 **temperature_k**、**pressure_pa** 和 **pressure_atm** 标准数值字段，并记录气体比例总和、数据质量标记、数值匹配状态、文件大小和 SHA-256 内容校验值。
+推送后，同一个工作流会自动重新生成并发布在线索引。维护者也可以进入 **Actions -> Gas search validation and Pages deployment -> Run workflow** 手动运行。
 
-索引生成程序优先解析文件内部的 **Identifier:**，例如 **Ar 90%, CO2 10%, T=293.15 K, p=1 atm**。因此，即使文件命名不规则，也可以按照实际内容检索。无法完整解析的文件会记录在 [GasFile/gas_index_report.md](GasFile/gas_index_report.md) 中。特殊文件可以在 [GasFile/gas_metadata_override.json](GasFile/gas_metadata_override.json) 中修正，气体别名可以在 [GasFile/gas_aliases.json](GasFile/gas_aliases.json) 中维护。
+### 更新本地克隆的索引
 
-GitHub Actions 会拒绝过期索引，并在更新进入 **main** 后发布验证通过的检索页面。
+部署工作流不会产生机器人自动提交。如果需要在本地克隆中检索刚新增的文件，请先重新生成本地索引：
+
+~~~bash
+python3 tools/build_gas_index.py --pretty
+python3 tools/build_gas_index.py --check
+~~~
+
+文件存在警告时，应检查 [GasFile/gas_index_report.md](GasFile/gas_index_report.md)。schema v2 索引包含 **temperature_k**、**pressure_pa**、**pressure_atm**、比例总和、数据质量标记、数值匹配状态、文件大小和 SHA-256 校验值。
+
+索引生成程序优先解析文件内部的 **Identifier:**，例如 **Ar 90%, CO2 10%, T=293.15 K, p=1 atm**。因此，即使文件命名不规则，也可以按照实际内容检索。特殊文件可以在 [GasFile/gas_metadata_override.json](GasFile/gas_metadata_override.json) 中修正，气体别名可以在 [GasFile/gas_aliases.json](GasFile/gas_aliases.json) 中维护。

@@ -232,6 +232,7 @@ tr:hover td{background:#fafcfb}
     <div class="action-row">
       <div id="loadStatus" class="status-line">Loading GasFile/gas_index.json...</div>
       <div class="action-buttons">
+        <button id="refreshBtn" class="btn" type="button" title="Fetch the latest deployed index">Refresh index</button>
         <button id="shareBtn" class="btn" type="button">Copy query link</button>
         <button id="exportBtn" class="btn" type="button">Export CSV</button>
         <button id="resetBtn" class="btn primary" type="button">Reset</button>
@@ -651,6 +652,50 @@ function resetAll(){
   document.querySelectorAll('[data-mode]').forEach(button=>button.classList.toggle('active',button.dataset.mode==='nearest'));
   applySearch();
 }
+function refreshComponentOptions(){
+  document.querySelectorAll('.component-select').forEach(select=>{
+    const selected=select.value;
+    select.innerHTML=componentOptions(selected);
+    if(selected&&!state.components.includes(selected)){
+      select.insertAdjacentHTML('beforeend','<option value="'+attr(selected)+'" selected>'+esc(selected)+'</option>');
+    }
+    select.value=selected;
+  });
+}
+function applyIndexData(data,refreshSelections){
+  if((data.schema_version||0)<2)throw new Error('schema v2 index required');
+  state.files=data.files||[];
+  state.schema=data.schema_version;
+  state.components=Object.keys(data.summary?.component_counts||{}).sort((a,b)=>a.localeCompare(b));
+  el('totalFiles').textContent=state.files.length;
+  el('readyFiles').textContent=data.summary?.match_ready_files||0;
+  const generated=data.summary?.generated_at_utc||'unknown';
+  el('loadStatus').textContent='Index v'+state.schema+' · '+state.files.length+' files · generated '+generated+' · loaded '+new Date().toLocaleString();
+  if(refreshSelections)refreshComponentOptions();
+}
+async function fetchLatestIndex(){
+  const url='GasFile/gas_index.json?refresh='+Date.now();
+  const response=await fetch(url,{cache:'no-store'});
+  if(!response.ok)throw new Error(response.status+' '+response.statusText);
+  return response.json();
+}
+async function refreshIndex(){
+  const button=el('refreshBtn');
+  const label=button.textContent;
+  button.disabled=true;
+  button.textContent='Refreshing...';
+  try{
+    const data=await fetchLatestIndex();
+    applyIndexData(data,true);
+    applySearch();
+    showToast('Latest index loaded.');
+  }catch(error){
+    showToast('Index refresh failed: '+error.message);
+  }finally{
+    button.disabled=false;
+    button.textContent=label;
+  }
+}
 function bindEvents(){
   document.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>setMode(button.dataset.mode)));
   el('addComponentBtn').addEventListener('click',()=>{addMixtureRow({});applySearch();});
@@ -665,6 +710,7 @@ function bindEvents(){
   el('mixtureRows').addEventListener('input',applySearch);
   ['exactComponents','temperature','temperatureUnit','temperatureTolerance','pressure','pressureUnit','pressureTolerance','textQuery','qualityFilter','sortBy']
     .forEach(id=>el(id).addEventListener('input',applySearch));
+  el('refreshBtn').addEventListener('click',refreshIndex);
   el('resetBtn').addEventListener('click',resetAll);
   el('shareBtn').addEventListener('click',()=>copyText(buildShareUrl(getQuery()),'Query link copied.'));
   el('exportBtn').addEventListener('click',exportCsv);
@@ -675,16 +721,8 @@ function bindEvents(){
 }
 async function init(){
   try{
-    const response=await fetch('GasFile/gas_index.json',{cache:'no-store'});
-    if(!response.ok)throw new Error(response.status+' '+response.statusText);
-    const data=await response.json();
-    if((data.schema_version||0)<2)throw new Error('schema v2 index required');
-    state.files=data.files||[];
-    state.schema=data.schema_version;
-    state.components=Object.keys(data.summary?.component_counts||{}).sort((a,b)=>a.localeCompare(b));
-    el('totalFiles').textContent=state.files.length;
-    el('readyFiles').textContent=data.summary?.match_ready_files||0;
-    el('loadStatus').textContent='Index v'+state.schema+' · generated '+(data.summary?.generated_at_utc||'unknown');
+    const data=await fetchLatestIndex();
+    applyIndexData(data,false);
     loadUrlState();
     bindEvents();
     applySearch();
