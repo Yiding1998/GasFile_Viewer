@@ -3,50 +3,698 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gas File Search</title>
+<title>Garfield Gas File Search</title>
 <style>
-:root{--bg:#f4f6f8;--panel:#fff;--text:#17202c;--muted:#637083;--line:#d8e0ea;--primary:#0f6b5c;--primary-dark:#0a5146;--soft:#edf7f5;--warn:#8a5a00;--bad:#a8201a;--ok:#0f6b3f}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif}header{background:#183044;color:#fff;padding:24px 18px}.wrap{max-width:1320px;margin:0 auto}h1{margin:0 0 6px;font-size:28px}header p{margin:0;color:#d7e3ec}.bar{display:grid;grid-template-columns:2fr repeat(4,minmax(130px,1fr));gap:10px;align-items:end;background:var(--panel);border-bottom:1px solid var(--line);padding:14px 18px;position:sticky;top:0;z-index:3}.control{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}input,select,button{font:inherit;min-height:38px;border:1px solid #c9d4df;border-radius:7px;background:#fff;color:var(--text);padding:7px 9px}button{cursor:pointer;font-weight:700;background:var(--primary);border-color:var(--primary);color:#fff}button:hover{background:var(--primary-dark)}main{padding:18px}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}.metric{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px}.metric b{display:block;font-size:22px}.metric span{font-size:12px;color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}.tools{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:#f7fafc;border-radius:999px;padding:4px 8px;font-size:12px;color:#415066}.chip.ok{background:#e9f7ef;color:var(--ok)}.chip.warn{background:#fff5df;color:var(--warn)}.chip.bad{background:#ffeceb;color:var(--bad)}table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:9px 10px;text-align:left;vertical-align:top}th{position:sticky;top:67px;background:#eef3f7;z-index:2;color:#314055}td.path{font-family:"SFMono-Regular",Consolas,monospace;font-size:12px;word-break:break-all}.component{display:inline-flex;margin:1px 4px 3px 0;padding:3px 7px;border-radius:999px;background:var(--soft);color:#0d5d50;font-weight:700}.muted{color:var(--muted)}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions a,.actions button{min-height:30px;border-radius:6px;padding:5px 8px;text-decoration:none;font-size:12px}.actions a{background:#eef3f7;color:#193247;border:1px solid #cbd6e0}.actions button{background:#fff;color:#193247;border-color:#cbd6e0}.empty{padding:30px;text-align:center;color:var(--muted)}.status{padding:10px 12px;border-bottom:1px solid var(--line);background:#f7fafc;color:#43546b;font-size:13px}.hidden{display:none}@media(max-width:900px){.bar{grid-template-columns:1fr 1fr}.bar .wide{grid-column:1/-1}th{top:150px}}@media(max-width:620px){.bar{position:static;grid-template-columns:1fr}th{position:static}table,tbody,tr,td{display:block}thead{display:none}tr{border-bottom:1px solid var(--line);padding:8px 0}td{border:0;padding:5px 10px}td::before{content:attr(data-label);display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:2px}}
+:root{
+  --bg:#f5f7f6;--surface:#fff;--text:#18211e;--muted:#66716d;--line:#d6ddd9;
+  --accent:#176b52;--accent-dark:#0f513e;--accent-soft:#e8f4ef;--blue:#285f91;
+  --blue-soft:#eaf1f8;--amber:#8a5b08;--amber-soft:#fff4d8;--red:#a3372d;
+  --red-soft:#fcecea;--shadow:0 1px 2px rgba(20,35,29,.08)
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:14px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--blue)}
+.topbar{background:#203b32;color:#fff;border-bottom:4px solid #d49a27}
+.topbar-inner{max-width:1480px;margin:0 auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand h1{font-size:24px;line-height:1.2;margin:0 0 4px;letter-spacing:0}
+.brand p{margin:0;color:#d7e3de;font-size:13px}
+.top-links{display:flex;gap:8px;flex-wrap:wrap}
+.top-links a{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:7px 10px;border-radius:6px}
+.query-band{background:var(--surface);border-bottom:1px solid var(--line)}
+.container{max-width:1480px;margin:0 auto;padding:16px 22px}
+.mode-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.segmented{display:inline-grid;grid-template-columns:repeat(3,minmax(96px,1fr));border:1px solid #bfc9c4;border-radius:7px;overflow:hidden;background:#f2f5f3}
+.segmented button{border:0;border-right:1px solid #bfc9c4;background:transparent;min-height:38px;padding:7px 12px;font-weight:700}
+.segmented button:last-child{border-right:0}
+.segmented button.active{background:var(--accent);color:#fff}
+.mode-options{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.check{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:#3e4a45}
+.check input{width:16px;height:16px;accent-color:var(--accent)}
+.query-grid{display:grid;grid-template-columns:minmax(390px,1.35fr) minmax(340px,1fr) minmax(250px,.8fr);gap:18px;align-items:start}
+.group{min-width:0}
+.group-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;font-size:12px;font-weight:800;color:#4e5b56;text-transform:uppercase}
+.inline-actions{display:flex;gap:6px}
+.btn,.icon-btn{border:1px solid #bfc9c4;background:#fff;border-radius:6px;min-height:36px;padding:7px 11px;font-weight:700;box-shadow:var(--shadow)}
+.btn:hover,.icon-btn:hover{border-color:#809088;background:#f7faf8}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-dark)}
+.btn.subtle{box-shadow:none;background:#f6f8f7}
+.icon-btn{width:34px;min-height:34px;padding:0;display:inline-grid;place-items:center}
+.mixture-list{display:grid;gap:7px}
+.mixture-row{display:grid;grid-template-columns:minmax(135px,1fr) 92px 92px 34px;gap:7px;align-items:center}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field span{font-size:12px;font-weight:700;color:#59665f}
+input,select{width:100%;min-height:38px;border:1px solid #bcc7c1;border-radius:6px;background:#fff;padding:7px 9px}
+input:focus,select:focus,button:focus-visible{outline:3px solid rgba(40,95,145,.2);outline-offset:1px;border-color:var(--blue)}
+.input-unit{display:grid;grid-template-columns:minmax(0,1fr) 88px}
+.input-unit input{border-radius:6px 0 0 6px}
+.input-unit select{border-left:0;border-radius:0 6px 6px 0}
+.condition-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.condition-block{display:grid;gap:8px;border-left:3px solid var(--line);padding-left:10px}
+.tolerance-line{display:grid;grid-template-columns:1fr 86px;gap:7px}
+.search-stack{display:grid;gap:10px}
+.validation{min-height:18px;margin-top:6px;font-size:12px;color:var(--muted)}
+.validation.error{color:var(--red);font-weight:700}
+.validation.warn{color:var(--amber);font-weight:700}
+.action-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid #e3e8e5;flex-wrap:wrap}
+.action-buttons{display:flex;gap:7px;flex-wrap:wrap}
+.status-line{font-size:12px;color:var(--muted)}
+.results{padding-top:14px;padding-bottom:30px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));border:1px solid var(--line);background:var(--surface);border-radius:7px;overflow:hidden;margin-bottom:12px}
+.metric{padding:11px 13px;border-right:1px solid var(--line)}
+.metric:last-child{border-right:0}
+.metric b{display:block;font-size:21px;line-height:1.15}
+.metric span{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700}
+.result-panel{background:var(--surface);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.result-tools{min-height:48px;padding:8px 11px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;min-height:25px;padding:3px 7px;border:1px solid #ced7d2;border-radius:999px;background:#f7f9f8;color:#425049;font-size:11px;font-weight:700}
+.chip.green{background:var(--accent-soft);color:var(--accent-dark);border-color:#bddccf}
+.chip.blue{background:var(--blue-soft);color:#244e75;border-color:#c7d9e9}
+.chip.amber{background:var(--amber-soft);color:var(--amber);border-color:#efd99d}
+.chip.red{background:var(--red-soft);color:var(--red);border-color:#edc4bf}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+th,td{padding:9px 10px;border-bottom:1px solid #e6ebe8;text-align:left;vertical-align:top}
+th{position:sticky;top:0;background:#edf2ef;color:#3f4d47;font-size:11px;text-transform:uppercase;z-index:2}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:#fafcfb}
+.rank{width:42px;color:var(--muted);font-weight:800}
+.components{min-width:220px}
+.component{display:inline-flex;margin:0 4px 4px 0;padding:3px 7px;border-radius:5px;background:var(--accent-soft);color:var(--accent-dark);font-weight:800}
+.condition{min-width:145px}
+.match{min-width:190px}
+.delta-list{display:flex;flex-wrap:wrap;gap:4px}
+.file-cell{min-width:270px;max-width:420px}
+.identifier{margin-bottom:4px}
+.path{font-family:"SFMono-Regular",Consolas,monospace;font-size:11px;color:#59655f;word-break:break-all}
+.actions{display:flex;gap:5px;flex-wrap:wrap;min-width:180px}
+.actions a,.actions button{display:inline-flex;align-items:center;justify-content:center;min-height:31px;padding:5px 8px;border:1px solid #bdc9c3;border-radius:5px;background:#fff;color:#244c70;text-decoration:none;font-size:11px;font-weight:800}
+.actions a:hover,.actions button:hover{background:#f0f5f2}
+.empty{padding:36px 18px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--text);margin-bottom:5px}
+.toast{position:fixed;right:18px;bottom:18px;background:#1f332c;color:#fff;padding:10px 13px;border-radius:6px;box-shadow:0 5px 20px rgba(0,0,0,.18);z-index:20}
+.hidden{display:none!important}
+@media(max-width:1080px){
+  .query-grid{grid-template-columns:1fr 1fr}.search-group{grid-column:1/-1}
+  .metrics{grid-template-columns:1fr 1fr}.metric:nth-child(2){border-right:0}.metric:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media(max-width:720px){
+  .topbar-inner,.container{padding-left:12px;padding-right:12px}.topbar-inner{align-items:flex-start}
+  .query-grid,.condition-grid{grid-template-columns:1fr}.search-group{grid-column:auto}
+  .mixture-row{grid-template-columns:minmax(120px,1fr) 78px 78px 34px}
+  .metrics{grid-template-columns:1fr 1fr}
+  table,tbody,tr,td{display:block}thead{display:none}tr{padding:8px 0;border-bottom:1px solid var(--line)}
+  td{border:0;padding:5px 10px;max-width:none!important}
+  td:before{content:attr(data-label);display:block;font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:3px}
+  td.rank{display:none}.actions{min-width:0}
+}
+@media(max-width:470px){
+  .brand h1{font-size:20px}.top-links{display:none}.segmented{width:100%}.mode-options{width:100%}
+  .mixture-row{grid-template-columns:1fr 1fr 34px}.mixture-row .component-select{grid-column:1/-1}
+  .metrics{grid-template-columns:1fr}.metric{border-right:0;border-bottom:1px solid var(--line)!important}.metric:last-child{border-bottom:0!important}
+}
 </style>
 </head>
 <body>
-<header><div class="wrap"><h1>Gas File Search</h1><p>Search Garfield gas files by parsed gas components, fractions, temperature, pressure, and path.</p></div></header>
-<section class="bar">
-<label class="control wide">Search<input id="query" placeholder="Examples: Ar CO2, SF6 10, C2H2F4 iC4H10"></label>
-<label class="control">Component<select id="component"><option value="">All components</option></select></label>
-<label class="control">Match<select id="matchMode"><option value="all">All terms</option><option value="any">Any term</option></select></label>
-<label class="control">Status<select id="statusFilter"><option value="">All statuses</option><option value="ok">ok</option><option value="fallback">fallback</option><option value="needs_review">needs_review</option><option value="error">error</option></select></label>
-<label class="control">Sort<select id="sortBy"><option value="path">Path</option><option value="components">Components</option><option value="pressure">Pressure</option><option value="temperature">Temperature</option><option value="status">Status</option></select></label>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <h1>Garfield Gas File Search</h1>
+      <p>Composition-aware matching for indexed Garfield++ gas files</p>
+    </div>
+    <nav class="top-links">
+      <a href="README.md">Documentation</a>
+      <a href="README.zh-CN.md">中文说明</a>
+    </nav>
+  </div>
+</header>
+
+<section class="query-band">
+  <div class="container">
+    <div class="mode-row">
+      <div class="segmented" role="group" aria-label="Search mode">
+        <button type="button" data-mode="nearest" class="active">Nearest</button>
+        <button type="button" data-mode="range">Within range</button>
+        <button type="button" data-mode="exact">Exact</button>
+      </div>
+      <div class="mode-options">
+        <label class="check"><input id="exactComponents" type="checkbox" checked>Exact component set</label>
+        <label class="field" style="min-width:190px"><span>Sort results</span>
+          <select id="sortBy">
+            <option value="overall">Overall closest</option>
+            <option value="composition">Composition closest</option>
+            <option value="temperature">Temperature closest</option>
+            <option value="pressure">Pressure closest</option>
+            <option value="path">Path</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="query-grid">
+      <section class="group">
+        <div class="group-title">
+          <span>Target composition</span>
+          <div class="inline-actions">
+            <button id="balanceBtn" class="btn subtle" type="button" title="Set the final component to the remaining percentage">Balance last</button>
+            <button id="addComponentBtn" class="btn subtle" type="button">Add component</button>
+          </div>
+        </div>
+        <div class="mixture-list" id="mixtureRows"></div>
+        <div id="mixtureValidation" class="validation"></div>
+      </section>
+
+      <section class="group">
+        <div class="group-title"><span>Target conditions</span></div>
+        <div class="condition-grid">
+          <div class="condition-block">
+            <label class="field"><span>Temperature</span>
+              <div class="input-unit">
+                <input id="temperature" type="number" step="any" placeholder="293.15">
+                <select id="temperatureUnit" aria-label="Temperature unit">
+                  <option value="K">K</option>
+                  <option value="C">°C</option>
+                  <option value="F">°F</option>
+                </select>
+              </div>
+            </label>
+            <label class="field"><span>Tolerance</span>
+              <div class="input-unit">
+                <input id="temperatureTolerance" type="number" min="0" step="any" value="5">
+                <select aria-label="Temperature tolerance unit" disabled><option>K</option></select>
+              </div>
+            </label>
+          </div>
+          <div class="condition-block">
+            <label class="field"><span>Pressure</span>
+              <div class="input-unit">
+                <input id="pressure" type="number" min="0" step="any" placeholder="1">
+                <select id="pressureUnit" aria-label="Pressure unit">
+                  <option value="atm">atm</option>
+                  <option value="bar">bar</option>
+                  <option value="mbar">mbar</option>
+                  <option value="Pa">Pa</option>
+                  <option value="kPa">kPa</option>
+                  <option value="Torr">Torr</option>
+                </select>
+              </div>
+            </label>
+            <label class="field"><span>Relative tolerance</span>
+              <div class="input-unit">
+                <input id="pressureTolerance" type="number" min="0" step="any" value="10">
+                <select aria-label="Pressure tolerance unit" disabled><option>%</option></select>
+              </div>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="group search-group">
+        <div class="group-title"><span>Additional filters</span></div>
+        <div class="search-stack">
+          <label class="field"><span>Text, alias, identifier, or path</span>
+            <input id="textQuery" type="search" placeholder="R134a, RPC, 20c">
+          </label>
+          <label class="field"><span>Data quality</span>
+            <select id="qualityFilter">
+              <option value="">All indexed files</option>
+              <option value="ready">Ready for numeric matching</option>
+              <option value="warning">Has data warning</option>
+            </select>
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <div class="action-row">
+      <div id="loadStatus" class="status-line">Loading GasFile/gas_index.json...</div>
+      <div class="action-buttons">
+        <button id="shareBtn" class="btn" type="button">Copy query link</button>
+        <button id="exportBtn" class="btn" type="button">Export CSV</button>
+        <button id="resetBtn" class="btn primary" type="button">Reset</button>
+      </div>
+    </div>
+  </div>
 </section>
-<main class="wrap">
-<div id="loadStatus" class="status">Loading GasFile/gas_index.json ...</div>
-<section class="summary">
-<div class="metric"><b id="totalFiles">0</b><span>Total indexed files</span></div>
-<div class="metric"><b id="shownFiles">0</b><span>Current results</span></div>
-<div class="metric"><b id="okFiles">0</b><span>Parsed from Identifier</span></div>
-<div class="metric"><b id="reviewFiles">0</b><span>Need review</span></div>
-</section>
-<section class="panel">
-<div class="tools"><div class="chips" id="activeChips"></div><div class="actions"><button id="resetBtn" type="button">Reset</button></div></div>
-<div id="empty" class="empty hidden">No matching gas files.</div>
-<div style="overflow:auto"><table id="resultTable"><thead><tr><th>Components</th><th>Conditions</th><th>Identifier</th><th>Path</th><th>Actions</th></tr></thead><tbody id="tbody"></tbody></table></div>
-</section>
+
+<main class="container results">
+  <section class="metrics">
+    <div class="metric"><b id="totalFiles">0</b><span>Indexed files</span></div>
+    <div class="metric"><b id="shownFiles">0</b><span>Current results</span></div>
+    <div class="metric"><b id="readyFiles">0</b><span>Match ready</span></div>
+    <div class="metric"><b id="activeMode">Nearest</b><span>Search mode</span></div>
+  </section>
+
+  <section class="result-panel">
+    <div class="result-tools">
+      <div id="activeChips" class="chips"></div>
+      <span id="resultNote" class="status-line"></span>
+    </div>
+    <div id="empty" class="empty hidden"></div>
+    <div id="tableWrap" class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Composition</th><th>Conditions</th><th>Match details</th><th>File</th><th>Actions</th></tr></thead>
+        <tbody id="resultBody"></tbody>
+      </table>
+    </div>
+  </section>
 </main>
+<div id="toast" class="toast hidden" role="status"></div>
+
 <script>
-const state={files:[],filtered:[]};
+const ATM_PA=101325;
+const PRESSURE_FACTORS={atm:ATM_PA,bar:100000,mbar:100,Pa:1,kPa:1000,Torr:ATM_PA/760};
+const state={files:[],results:[],components:[],mode:'nearest',schema:0};
 const el=id=>document.getElementById(id);
-function norm(s){return String(s||'').toLowerCase();}
-function componentLabel(item){return item.fraction===null||item.fraction===undefined?item.name:`${item.name} ${item.fraction}%`;}
-function statusClass(status){return status==='ok'?'ok':status==='fallback'?'warn':status==='needs_review'||status==='error'?'bad':'';}
-function matchesTerms(file,terms,mode){if(!terms.length)return true;const hay=norm(file.search_text||[file.path,file.identifier,file.component_key,file.pressure,file.temperature].join(' '));const checks=terms.map(t=>hay.includes(norm(t)));return mode==='any'?checks.some(Boolean):checks.every(Boolean);}
-function applyFilters(){const q=el('query').value.trim();const terms=q.split(/[\s,;+]+/).filter(Boolean);const comp=el('component').value;const status=el('statusFilter').value;const mode=el('matchMode').value;let rows=state.files.filter(file=>matchesTerms(file,terms,mode));if(comp)rows=rows.filter(file=>(file.component_names||[]).includes(comp));if(status)rows=rows.filter(file=>file.parse_status===status);const sortBy=el('sortBy').value;rows.sort((a,b)=>norm(sortValue(a,sortBy)).localeCompare(norm(sortValue(b,sortBy)),undefined,{numeric:true}));state.filtered=rows;render(rows,terms,comp,status);}
-function sortValue(file,key){if(key==='components')return file.component_key||'';if(key==='pressure')return file.pressure||'';if(key==='temperature')return file.temperature||'';if(key==='status')return file.parse_status||'';return file.path||'';}
-function render(rows,terms,comp,status){el('shownFiles').textContent=rows.length;const chips=[];if(terms.length)chips.push(`<span class="chip">Terms: ${terms.join(', ')}</span>`);if(comp)chips.push(`<span class="chip ok">Component: ${comp}</span>`);if(status)chips.push(`<span class="chip ${statusClass(status)}">Status: ${status}</span>`);el('activeChips').innerHTML=chips.join('');el('empty').classList.toggle('hidden',rows.length!==0);el('resultTable').classList.toggle('hidden',rows.length===0);el('tbody').innerHTML=rows.map(file=>{const comps=(file.components||[]).map(c=>`<span class="component">${componentLabel(c)}</span>`).join('')||'<span class="muted">Unknown</span>';const conditions=[file.pressure,file.temperature].filter(Boolean).join(' / ')||'<span class="muted">Not recorded</span>';const href=encodeURI(file.path);return `<tr><td data-label="Components">${comps}<div><span class="chip ${statusClass(file.parse_status)}">${file.parse_status}</span> <span class="chip">${file.source||'unknown'}</span></div></td><td data-label="Conditions">${conditions}</td><td data-label="Identifier">${escapeHtml(file.identifier||'')}</td><td data-label="Path" class="path">${escapeHtml(file.path)}</td><td data-label="Actions"><div class="actions"><a href="${href}" target="_blank" rel="noopener">Open</a><a href="${href}" download>Download</a><button type="button" data-copy="${escapeAttr(file.path)}">Copy path</button></div></td></tr>`}).join('');document.querySelectorAll('[data-copy]').forEach(btn=>btn.addEventListener('click',()=>copyText(btn.dataset.copy,btn)));}
-function escapeHtml(s){return String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
-function escapeAttr(s){return escapeHtml(s).replace(/'/g,'&#39;');}
-function copyText(text,btn){navigator.clipboard?.writeText(text).then(()=>{const old=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=old,900);});}
-function populateComponents(){const set=new Set();state.files.forEach(file=>(file.component_names||[]).forEach(name=>set.add(name)));const options=['<option value="">All components</option>'].concat([...set].sort((a,b)=>a.localeCompare(b)).map(name=>`<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`));el('component').innerHTML=options.join('');}
-function updateMetrics(data){const counts=data.summary?.status_counts||{};el('totalFiles').textContent=state.files.length;el('okFiles').textContent=counts.ok||0;el('reviewFiles').textContent=(counts.needs_review||0)+(counts.error||0);}
-async function init(){try{const res=await fetch('GasFile/gas_index.json',{cache:'no-store'});if(!res.ok)throw new Error(`${res.status} ${res.statusText}`);const data=await res.json();state.files=data.files||[];populateComponents();updateMetrics(data);el('loadStatus').textContent=`Loaded ${state.files.length} indexed files. Generated: ${data.summary?.generated_at_utc||'unknown'}`;['query','component','matchMode','statusFilter','sortBy'].forEach(id=>el(id).addEventListener('input',applyFilters));el('resetBtn').addEventListener('click',()=>{el('query').value='';el('component').value='';el('statusFilter').value='';el('matchMode').value='all';el('sortBy').value='path';applyFilters();});applyFilters();}catch(err){el('loadStatus').textContent=`Failed to load GasFile/gas_index.json: ${err.message}. Use GitHub Pages or run a local web server from the repository root.`;}}
+const num=value=>value===''||value===null||value===undefined?null:Number(value);
+const finite=value=>value!==null&&Number.isFinite(value);
+const esc=value=>String(value??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const attr=value=>esc(value).replace(/'/g,'&#39;');
+const fmt=(value,digits=3)=>finite(value)?Number(value.toFixed(digits)).toString():'—';
+const signed=(value,digits=3)=>finite(value)?(value>0?'+':'')+fmt(value,digits):'—';
+
+function temperatureToK(value,unit){
+  if(!finite(value))return null;
+  if(unit==='C')return value+273.15;
+  if(unit==='F')return (value-32)*5/9+273.15;
+  return value;
+}
+function pressureToPa(value,unit){
+  if(!finite(value)||value<=0)return null;
+  return value*(PRESSURE_FACTORS[unit]||1);
+}
+function componentOptions(selected){
+  return '<option value="">Select gas</option>'+state.components.map(name=>
+    '<option value="'+attr(name)+'"'+(name===selected?' selected':'')+'>'+esc(name)+'</option>'
+  ).join('');
+}
+function addMixtureRow(value){
+  value=value||{};
+  const row=document.createElement('div');
+  row.className='mixture-row';
+  row.innerHTML=
+    '<select class="component-select" aria-label="Gas component">'+componentOptions(value.name||'')+'</select>'+
+    '<input class="fraction-input" type="number" min="0" max="100" step="any" placeholder="%" aria-label="Target percentage" value="'+attr(value.fraction??'')+'">'+
+    '<input class="fraction-tolerance" type="number" min="0" max="100" step="any" title="Percentage-point tolerance" aria-label="Percentage tolerance" value="'+attr(value.tolerance??5)+'">'+
+    '<button class="icon-btn remove-component" type="button" title="Remove component" aria-label="Remove component">X</button>';
+  el('mixtureRows').appendChild(row);
+}
+function readComponents(){
+  return [...el('mixtureRows').querySelectorAll('.mixture-row')].map(row=>({
+    name:row.querySelector('.component-select').value,
+    fraction:num(row.querySelector('.fraction-input').value),
+    tolerance:Math.max(0,num(row.querySelector('.fraction-tolerance').value)??5)
+  })).filter(item=>item.name);
+}
+function validateQuery(query){
+  const names=query.components.map(item=>item.name);
+  if(new Set(names).size!==names.length)return {type:'error',message:'Each gas component can be selected only once.'};
+  if(query.components.some(item=>finite(item.fraction)&&(item.fraction<0||item.fraction>100))){
+    return {type:'error',message:'Each gas fraction must be between 0% and 100%.'};
+  }
+  const allFractions=query.components.length>0&&query.components.every(item=>finite(item.fraction));
+  const sum=query.components.reduce((total,item)=>total+(finite(item.fraction)?item.fraction:0),0);
+  if(query.exactSet&&allFractions&&Math.abs(sum-100)>0.05){
+    return {type:'error',message:'Exact component fractions must total 100% (current total: '+fmt(sum,4)+'%).'};
+  }
+  if(query.components.length===1&&query.exactSet&&allFractions&&Math.abs(sum-100)>0.05){
+    return {type:'warn',message:'A single-component exact mixture should normally be 100%.'};
+  }
+  return {type:'',message:allFractions&&query.components.length?'Composition total: '+fmt(sum,4)+'%.':''};
+}
+function getQuery(){
+  const temperature=num(el('temperature').value);
+  const pressure=num(el('pressure').value);
+  return {
+    mode:state.mode,
+    components:readComponents(),
+    exactSet:el('exactComponents').checked||state.mode==='exact',
+    temperature:temperatureToK(temperature,el('temperatureUnit').value),
+    temperatureInput:temperature,
+    temperatureUnit:el('temperatureUnit').value,
+    temperatureTolerance:Math.max(0,num(el('temperatureTolerance').value)??5),
+    pressure:pressureToPa(pressure,el('pressureUnit').value),
+    pressureInput:pressure,
+    pressureUnit:el('pressureUnit').value,
+    pressureTolerance:Math.max(0,num(el('pressureTolerance').value)??10),
+    text:el('textQuery').value.trim().toLowerCase(),
+    quality:el('qualityFilter').value,
+    sort:el('sortBy').value
+  };
+}
+function fileComponentMap(file){
+  const map=new Map();
+  (file.components||[]).forEach(item=>map.set(item.name,item.fraction));
+  return map;
+}
+function evaluate(file,query){
+  if(query.text){
+    const terms=query.text.split(/[\s,;+]+/).filter(Boolean);
+    const hay=(file.search_text||'').toLowerCase();
+    if(!terms.every(term=>hay.includes(term)))return null;
+  }
+  if(query.quality==='ready'&&!file.match_ready)return null;
+  if(query.quality==='warning'&&file.data_quality!=='warning')return null;
+
+  const names=file.component_names||[];
+  if(query.components.some(item=>!names.includes(item.name)))return null;
+  if(query.exactSet&&query.components.length&&names.length!==query.components.length)return null;
+
+  const map=fileComponentMap(file);
+  const fractionTargets=query.components.filter(item=>finite(item.fraction));
+  const componentDiffs=[];
+  for(const target of fractionTargets){
+    const actual=map.get(target.name);
+    if(!finite(actual))return null;
+    componentDiffs.push({
+      name:target.name,
+      signed:actual-target.fraction,
+      absolute:Math.abs(actual-target.fraction),
+      tolerance:target.tolerance
+    });
+  }
+
+  let compositionDelta=null;
+  if(componentDiffs.length){
+    const sumAbs=componentDiffs.reduce((sum,item)=>sum+item.absolute,0);
+    const complete=query.exactSet&&fractionTargets.length===query.components.length;
+    compositionDelta=complete?sumAbs/2:sumAbs/componentDiffs.length;
+  }
+
+  let temperatureSigned=null;
+  if(finite(query.temperature)){
+    if(!finite(file.temperature_k))return null;
+    temperatureSigned=file.temperature_k-query.temperature;
+  }
+
+  let pressureSignedPct=null;
+  if(finite(query.pressure)){
+    if(!finite(file.pressure_pa)||file.pressure_pa<=0)return null;
+    pressureSignedPct=(file.pressure_pa-query.pressure)/query.pressure*100;
+  }
+
+  if(query.mode==='range'){
+    if(componentDiffs.some(item=>item.absolute>item.tolerance+1e-9))return null;
+    if(finite(temperatureSigned)&&Math.abs(temperatureSigned)>query.temperatureTolerance+1e-9)return null;
+    if(finite(pressureSignedPct)&&Math.abs(pressureSignedPct)>query.pressureTolerance+1e-9)return null;
+  }
+  if(query.mode==='exact'){
+    if(componentDiffs.some(item=>item.absolute>1e-6))return null;
+    if(finite(temperatureSigned)&&Math.abs(temperatureSigned)>1e-6)return null;
+    if(finite(pressureSignedPct)&&Math.abs(pressureSignedPct)>1e-6)return null;
+  }
+
+  const scoreParts=[];
+  if(finite(compositionDelta)){
+    const scale=componentDiffs.reduce((sum,item)=>sum+Math.max(item.tolerance,.01),0)/componentDiffs.length;
+    scoreParts.push({value:compositionDelta/scale,weight:2});
+  }
+  if(finite(temperatureSigned))scoreParts.push({value:Math.abs(temperatureSigned)/Math.max(query.temperatureTolerance,.01),weight:1});
+  if(finite(pressureSignedPct))scoreParts.push({value:Math.abs(pressureSignedPct)/Math.max(query.pressureTolerance,.01),weight:1});
+  const weight=scoreParts.reduce((sum,item)=>sum+item.weight,0);
+  const score=weight?scoreParts.reduce((sum,item)=>sum+item.value*item.weight,0)/weight:0;
+
+  return {
+    score,
+    compositionDelta,
+    componentDiffs,
+    temperatureSigned,
+    pressureSignedPct,
+    extraComponents:Math.max(0,names.length-query.components.length)
+  };
+}
+function metricValue(result,key){
+  const m=result.metrics;
+  if(key==='composition')return finite(m.compositionDelta)?m.compositionDelta:Infinity;
+  if(key==='temperature')return finite(m.temperatureSigned)?Math.abs(m.temperatureSigned):Infinity;
+  if(key==='pressure')return finite(m.pressureSignedPct)?Math.abs(m.pressureSignedPct):Infinity;
+  if(key==='overall')return m.score;
+  return result.file.path||'';
+}
+function sortResults(results,query){
+  results.sort((a,b)=>{
+    if(query.sort==='path')return (a.file.path||'').localeCompare(b.file.path||'',undefined,{numeric:true});
+    const primary=metricValue(a,query.sort)-metricValue(b,query.sort);
+    if(Number.isFinite(primary)&&Math.abs(primary)>1e-12)return primary;
+    if(!Number.isFinite(primary)){
+      const av=metricValue(a,query.sort),bv=metricValue(b,query.sort);
+      if(av!==bv)return av===Infinity?1:-1;
+    }
+    const overall=a.metrics.score-b.metrics.score;
+    if(Math.abs(overall)>1e-12)return overall;
+    return (a.file.path||'').localeCompare(b.file.path||'',undefined,{numeric:true});
+  });
+}
+function modeLabel(mode){
+  return mode==='range'?'Within range':mode==='exact'?'Exact':'Nearest';
+}
+function applySearch(){
+  if(!state.files.length)return;
+  const query=getQuery();
+  const validation=validateQuery(query);
+  const validationNode=el('mixtureValidation');
+  validationNode.textContent=validation.message;
+  validationNode.className='validation '+validation.type;
+  if(validation.type==='error'){
+    state.results=[];
+    renderResults([],query,true);
+    return;
+  }
+  const results=[];
+  state.files.forEach(file=>{
+    const metrics=evaluate(file,query);
+    if(metrics)results.push({file,metrics});
+  });
+  sortResults(results,query);
+  state.results=results;
+  renderResults(results,query,false);
+}
+function componentMarkup(file){
+  return (file.components||[]).map(item=>
+    '<span class="component">'+esc(item.name)+' '+(finite(item.fraction)?fmt(item.fraction,4)+'%':'?')+'</span>'
+  ).join('')||'<span class="chip red">Unknown composition</span>';
+}
+function deltaMarkup(metrics,query){
+  const items=[];
+  if(finite(metrics.compositionDelta))items.push('<span class="chip green">Mix Δ '+fmt(metrics.compositionDelta,4)+' pp</span>');
+  if(finite(metrics.temperatureSigned))items.push('<span class="chip blue">T Δ '+signed(metrics.temperatureSigned,4)+' K</span>');
+  if(finite(metrics.pressureSignedPct))items.push('<span class="chip blue">p Δ '+signed(metrics.pressureSignedPct,4)+'%</span>');
+  if(metrics.extraComponents&&query.components.length)items.push('<span class="chip amber">+'+metrics.extraComponents+' extra gas</span>');
+  if(!items.length)items.push('<span class="chip">Text/component match</span>');
+  return '<div class="delta-list">'+items.join('')+'</div>';
+}
+function qualityMarkup(file){
+  if(file.data_quality==='warning'){
+    return '<span class="chip amber" title="'+attr((file.quality_flags||[]).join(', '))+'">Data warning</span>';
+  }
+  return '<span class="chip green">Ready</span>';
+}
+function renderResults(results,query,invalid){
+  el('shownFiles').textContent=results.length;
+  el('activeMode').textContent=modeLabel(query.mode);
+  const chips=[];
+  query.components.forEach(item=>chips.push('<span class="chip green">'+esc(item.name)+(finite(item.fraction)?' '+fmt(item.fraction,4)+'%':'')+'</span>'));
+  if(finite(query.temperature))chips.push('<span class="chip blue">T '+fmt(query.temperature,4)+' K</span>');
+  if(finite(query.pressure))chips.push('<span class="chip blue">p '+fmt(query.pressure/ATM_PA,5)+' atm</span>');
+  if(query.text)chips.push('<span class="chip">Text: '+esc(query.text)+'</span>');
+  el('activeChips').innerHTML=chips.join('')||'<span class="chip">No active query</span>';
+  el('resultNote').textContent=results.length+' of '+state.files.length+' files';
+
+  const empty=el('empty');
+  const table=el('tableWrap');
+  if(!results.length){
+    table.classList.add('hidden');
+    empty.classList.remove('hidden');
+    empty.innerHTML=invalid
+      ?'<strong>Invalid search parameters</strong>Correct the composition values above.'
+      :'<strong>No suitable gas file found</strong>Adjust the component set, tolerances, temperature, or pressure.';
+    el('resultBody').innerHTML='';
+    return;
+  }
+  empty.classList.add('hidden');
+  table.classList.remove('hidden');
+  el('resultBody').innerHTML=results.map((result,index)=>{
+    const file=result.file;
+    const conditions=[
+      file.temperature?'T='+esc(file.temperature):'T unknown',
+      file.pressure?'p='+esc(file.pressure):'p unknown'
+    ].join('<br>');
+    return '<tr>'+
+      '<td class="rank" data-label="Rank">'+(index+1)+'</td>'+
+      '<td class="components" data-label="Composition">'+componentMarkup(file)+'<div>'+qualityMarkup(file)+'</div></td>'+
+      '<td class="condition" data-label="Conditions">'+conditions+'</td>'+
+      '<td class="match" data-label="Match details">'+deltaMarkup(result.metrics,query)+'</td>'+
+      '<td class="file-cell" data-label="File"><div class="identifier">'+esc(file.identifier||file.file_name)+'</div><div class="path">'+esc(file.path)+'</div></td>'+
+      '<td data-label="Actions"><div class="actions">'+
+        '<a href="'+attr(encodeURI(file.path))+'" target="_blank" rel="noopener">Open</a>'+
+        '<a href="'+attr(encodeURI(file.path))+'" download>Download</a>'+
+        '<button type="button" data-copy-path="'+attr(file.path)+'">Copy path</button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+}
+function balanceLast(){
+  const rows=[...el('mixtureRows').querySelectorAll('.mixture-row')];
+  if(rows.length<2){showToast('Add at least two components first.');return;}
+  const values=rows.slice(0,-1).map(row=>num(row.querySelector('.fraction-input').value));
+  if(values.some(value=>!finite(value))){showToast('Enter the preceding component fractions first.');return;}
+  const remainder=100-values.reduce((sum,value)=>sum+value,0);
+  if(remainder<0){showToast('Component fractions already exceed 100%.');return;}
+  rows[rows.length-1].querySelector('.fraction-input').value=fmt(remainder,6);
+  applySearch();
+}
+function buildShareUrl(query){
+  const url=new URL(location.href);
+  url.search='';
+  url.searchParams.set('mode',query.mode);
+  if(query.components.length){
+    url.searchParams.set('mix',query.components.map(item=>
+      [item.name,finite(item.fraction)?item.fraction:'',item.tolerance].join(':')
+    ).join(','));
+  }
+  if(!query.exactSet)url.searchParams.set('extra','1');
+  if(finite(query.temperatureInput)){
+    url.searchParams.set('t',query.temperatureInput);
+    url.searchParams.set('tu',query.temperatureUnit);
+    url.searchParams.set('tt',query.temperatureTolerance);
+  }
+  if(finite(query.pressureInput)){
+    url.searchParams.set('p',query.pressureInput);
+    url.searchParams.set('pu',query.pressureUnit);
+    url.searchParams.set('pt',query.pressureTolerance);
+  }
+  if(query.text)url.searchParams.set('q',query.text);
+  if(query.quality)url.searchParams.set('quality',query.quality);
+  if(query.sort!=='overall')url.searchParams.set('sort',query.sort);
+  return url.toString();
+}
+async function copyText(text,message){
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(error){
+    const area=document.createElement('textarea');
+    area.value=text;area.style.position='fixed';area.style.opacity='0';
+    document.body.appendChild(area);area.select();document.execCommand('copy');area.remove();
+  }
+  showToast(message);
+}
+function exportCsv(){
+  if(!state.results.length){showToast('There are no results to export.');return;}
+  const headers=['rank','path','identifier','components','temperature','pressure','mixture_delta_pp','temperature_delta_k','pressure_delta_percent','sha256'];
+  const quote=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
+  const rows=state.results.map((result,index)=>{
+    const file=result.file,m=result.metrics;
+    return [
+      index+1,file.path,file.identifier,
+      (file.components||[]).map(item=>item.name+' '+(item.fraction??'?')+'%').join('; '),
+      file.temperature,file.pressure,m.compositionDelta,m.temperatureSigned,m.pressureSignedPct,file.sha256
+    ].map(quote).join(',');
+  });
+  const blob=new Blob([[headers.join(',')].concat(rows).join('\n')],{type:'text/csv;charset=utf-8'});
+  const link=document.createElement('a');
+  link.href=URL.createObjectURL(blob);
+  link.download='gas-file-search-results.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+function showToast(message){
+  const toast=el('toast');
+  toast.textContent=message;
+  toast.classList.remove('hidden');
+  clearTimeout(showToast.timer);
+  showToast.timer=setTimeout(()=>toast.classList.add('hidden'),1800);
+}
+function setMode(mode){
+  state.mode=mode;
+  document.querySelectorAll('[data-mode]').forEach(button=>button.classList.toggle('active',button.dataset.mode===mode));
+  el('exactComponents').disabled=mode==='exact';
+  if(mode==='exact')el('exactComponents').checked=true;
+  applySearch();
+}
+function loadUrlState(){
+  const params=new URLSearchParams(location.search);
+  const mode=params.get('mode');
+  if(['nearest','range','exact'].includes(mode))state.mode=mode;
+  el('mixtureRows').innerHTML='';
+  const mix=params.get('mix');
+  if(mix){
+    mix.split(',').forEach(part=>{
+      const values=part.split(':');
+      addMixtureRow({name:values[0],fraction:values[1],tolerance:values[2]||5});
+    });
+  }else{
+    addMixtureRow({});
+    addMixtureRow({});
+  }
+  el('exactComponents').checked=params.get('extra')!=='1';
+  const mappings=[
+    ['temperature','t'],['temperatureUnit','tu'],['temperatureTolerance','tt'],
+    ['pressure','p'],['pressureUnit','pu'],['pressureTolerance','pt'],
+    ['textQuery','q'],['qualityFilter','quality'],['sortBy','sort']
+  ];
+  mappings.forEach(pair=>{const value=params.get(pair[1]);if(value!==null)el(pair[0]).value=value;});
+  document.querySelectorAll('[data-mode]').forEach(button=>button.classList.toggle('active',button.dataset.mode===state.mode));
+  el('exactComponents').disabled=state.mode==='exact';
+}
+function resetAll(){
+  history.replaceState(null,'',location.pathname);
+  state.mode='nearest';
+  el('mixtureRows').innerHTML='';
+  addMixtureRow({});addMixtureRow({});
+  el('exactComponents').checked=true;el('exactComponents').disabled=false;
+  el('temperature').value='';el('temperatureUnit').value='K';el('temperatureTolerance').value='5';
+  el('pressure').value='';el('pressureUnit').value='atm';el('pressureTolerance').value='10';
+  el('textQuery').value='';el('qualityFilter').value='';el('sortBy').value='overall';
+  document.querySelectorAll('[data-mode]').forEach(button=>button.classList.toggle('active',button.dataset.mode==='nearest'));
+  applySearch();
+}
+function bindEvents(){
+  document.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>setMode(button.dataset.mode)));
+  el('addComponentBtn').addEventListener('click',()=>{addMixtureRow({});applySearch();});
+  el('balanceBtn').addEventListener('click',balanceLast);
+  el('mixtureRows').addEventListener('click',event=>{
+    if(event.target.closest('.remove-component')){
+      event.target.closest('.mixture-row').remove();
+      if(!el('mixtureRows').children.length)addMixtureRow({});
+      applySearch();
+    }
+  });
+  el('mixtureRows').addEventListener('input',applySearch);
+  ['exactComponents','temperature','temperatureUnit','temperatureTolerance','pressure','pressureUnit','pressureTolerance','textQuery','qualityFilter','sortBy']
+    .forEach(id=>el(id).addEventListener('input',applySearch));
+  el('resetBtn').addEventListener('click',resetAll);
+  el('shareBtn').addEventListener('click',()=>copyText(buildShareUrl(getQuery()),'Query link copied.'));
+  el('exportBtn').addEventListener('click',exportCsv);
+  el('resultBody').addEventListener('click',event=>{
+    const button=event.target.closest('[data-copy-path]');
+    if(button)copyText(button.dataset.copyPath,'File path copied.');
+  });
+}
+async function init(){
+  try{
+    const response=await fetch('GasFile/gas_index.json',{cache:'no-store'});
+    if(!response.ok)throw new Error(response.status+' '+response.statusText);
+    const data=await response.json();
+    if((data.schema_version||0)<2)throw new Error('schema v2 index required');
+    state.files=data.files||[];
+    state.schema=data.schema_version;
+    state.components=Object.keys(data.summary?.component_counts||{}).sort((a,b)=>a.localeCompare(b));
+    el('totalFiles').textContent=state.files.length;
+    el('readyFiles').textContent=data.summary?.match_ready_files||0;
+    el('loadStatus').textContent='Index v'+state.schema+' · generated '+(data.summary?.generated_at_utc||'unknown');
+    loadUrlState();
+    bindEvents();
+    applySearch();
+  }catch(error){
+    el('loadStatus').textContent='Failed to load gas index: '+error.message;
+    el('empty').classList.remove('hidden');
+    el('empty').innerHTML='<strong>Gas index unavailable</strong>Use GitHub Pages or run a local web server from the repository root.';
+    el('tableWrap').classList.add('hidden');
+  }
+}
 init();
 </script>
 </body>

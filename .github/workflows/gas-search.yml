@@ -1,0 +1,60 @@
+name: Gas search validation and Pages deployment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "GasFile/**"
+      - "tools/build_gas_index.py"
+      - "gas_file_search.html"
+      - "README.md"
+      - "README.zh-CN.md"
+      - "tests/**"
+      - ".github/workflows/gas-search.yml"
+  pull_request:
+    paths:
+      - "GasFile/**"
+      - "tools/build_gas_index.py"
+      - "gas_file_search.html"
+      - "tests/**"
+      - ".github/workflows/gas-search.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: gas-search-pages
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test index builder
+        run: python3 -m unittest discover -s tests -v
+      - name: Verify committed index
+        run: python3 tools/build_gas_index.py --check
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

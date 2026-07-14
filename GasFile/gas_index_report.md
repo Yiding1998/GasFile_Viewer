@@ -1,13 +1,21 @@
 # Gas File Index Report
 
-Generated at UTC: `2026-07-14T08:53:13+00:00`
+Schema version: **2**
+
+Generated at UTC: `2026-07-14T09:29:30+00:00`
 
 Total indexed files: **435**
+
+Ready for numeric matching: **434**
 
 ## Parse Status
 
 - `fallback`: 1
 - `ok`: 434
+
+## Data Quality Flags
+
+- `missing_component_fraction`: 1
 
 ## Component Counts
 
@@ -31,6 +39,10 @@ Total indexed files: **435**
 ## Needs Review
 
 No files require manual review.
+
+## Data Quality Review
+
+- `GasFile/Ar/Other_Gas_Mixtures/ar_70_co2_30_1000mbar.gas` -> missing_component_fraction
 
 ## Parsed By Path Fallback
 
