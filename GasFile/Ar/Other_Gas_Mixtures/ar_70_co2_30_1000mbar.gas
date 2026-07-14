@@ -2,7 +2,7 @@
 % Created 18/11/15 at 13.28.11 < none > GAS      "none                         "
  Version   : 12
  GASOK bits: TFTTFTFTTTFFFFFFFFFF
- Identifier: Ar/CO2, p = 1 atm, T = 293.15 K                                                 
+ Identifier: CO2 30%, Ar 70%, T=293.15 K, p=1 atm                                                  
  Clusters  :                                                                                 
  Dimension : F        20         1         1         0         0
  E fields   
