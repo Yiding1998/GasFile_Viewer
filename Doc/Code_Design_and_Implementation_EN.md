@@ -429,6 +429,12 @@ Drift, diffusion, Townsend, attachment, mobility, tensor, dissociation, excitati
 
 `baseParams` is the built-in parameter registry with group, key, label, source, unit, and GASOK bit. `allParams` adds user formulas and the active file's individual excitation and ionization channels.
 
+### 9.5 Legend composition source
+
+`componentMap` calls `identifierComposition` first. When `Identifier:` contains parseable percentage components, that result is used exclusively, and `canonicalGasName` normalizes `iC4H10` and `i-C4H10` to `i-C4H10`. `arrayComposition` interprets the Mixture array only when the Identifier supplies no component fractions.
+
+The two sources must not be merged blindly. A Mixture array stores positions and fractions, while the gas-number table may vary by Garfield/Magboltz version. An incorrect fixed mapping can invent component names and place them beside the correct Identifier entries. This precedence is shared by legends, component sorting, and composition scans.
+
 ## 10. Loading, Provenance, and State
 
 ### 10.1 Local files

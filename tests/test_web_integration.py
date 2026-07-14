@@ -50,6 +50,31 @@ class WorkbenchLibraryContractTests(unittest.TestCase):
             self.assertIn("'source_E_over_P'", html)
             self.assertIn("'pointOrder','showErrors','showXErrors'", html)
 
+    def test_identifier_composition_is_authoritative_for_legend_and_scans(self) -> None:
+        fixture = self.read(
+            "GasFile/RPCgas_Typical/Different_GasFraction/"
+            "c2h2f4_ic4h10_sf6_90_5_5.gas"
+        )
+        self.assertIn(
+            "Identifier: C2H2F4 90%, iC4H10 5%, SF6 5%",
+            fixture,
+        )
+        for name in [
+            "garfield_gas_workbench_pro.html",
+            "garfield_gas_workbench_pro_english.html",
+        ]:
+            html = self.read(name)
+            self.assertIn("function canonicalGasName(name)", html)
+            self.assertIn("/^i-?c4h10$/i.test(name)?'i-C4H10':name", html)
+            self.assertIn(
+                "return Object.keys(identifier).length?identifier:arrayComposition(g)",
+                html,
+            )
+            self.assertNotIn(
+                "return{...arrayComposition(g),...identifierComposition(g)}",
+                html,
+            )
+
     def test_standalone_search_uses_shared_core_and_links_both_workbenches(self) -> None:
         html = self.read("gas_file_search.html")
         self.assertIn('src="gas-search-core.js"', html)

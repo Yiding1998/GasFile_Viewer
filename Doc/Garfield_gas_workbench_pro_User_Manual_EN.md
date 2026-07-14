@@ -171,7 +171,7 @@ Automatic sorting supports:
 
 When **Specified Gas Fraction** is selected, choose a component such as SF6, CO2, or i-C4H10. Sorting can be ascending or descending.
 
-Composition values are taken primarily from the `.gas` Mixture array and are cross-checked against the Identifier for display and validation.
+Composition display prefers the `.gas` file's `Identifier:` because Mixture-array gas numbers can differ between Garfield/Magboltz versions. The Mixture array is used only when the Identifier has no parseable fractions.
 
 ## 5.4 Color Palettes
 
@@ -1076,7 +1076,7 @@ If the reference value is close to zero, ratios and percentage differences can b
 
 ## 22.6 Legend Composition Is Unexpected
 
-Composition display combines Identifier and the Mixture array. Different Magboltz versions or custom files may use different naming conventions. Verify the original file header and Mixture values.
+Composition display prefers the Identifier and normalizes `iC4H10` and `i-C4H10`. The Mixture array is used only when the Identifier has no parseable fractions. If fallback output is still unexpected, verify the original header, Mixture values, and version-specific gas-number mapping.
 
 ## 22.7 Templates Cannot Be Saved
 
