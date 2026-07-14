@@ -2,7 +2,7 @@
 title: "Garfield++ 气体输运参数科研绘图与分析工作台"
 subtitle: "使用说明书"
 author: "适用于 garfield_gas_workbench_pro.html"
-date: "2026-07-10"
+date: "2026-07-14"
 lang: zh-CN
 ---
 
@@ -13,6 +13,8 @@ lang: zh-CN
 ```text
 garfield_gas_workbench_pro.html
 ```
+
+[在线打开中文界面的气体文件工作台](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro.html)。
 
 该程序用于在浏览器中离线读取 Garfield、Garfield++ 或 Magboltz 生成的 ASCII `.gas` 文件，并完成多文件比较、物理量换算、误差展示、插值、归一化、扫描、拟合、二维图、多面板绘图和科研图片导出。
 
@@ -37,7 +39,7 @@ garfield_gas_workbench_pro.html
 
 ## 2.1 最简操作流程
 
-1. 双击打开 `garfield_gas_workbench_pro.html`。
+1. 打开[中文界面的气体文件工作台](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro.html)，或者在本地双击打开 `garfield_gas_workbench_pro.html`。
 2. 将一个或多个 `.gas` 文件拖入页面顶部区域，或点击“添加文件”。
 3. 在“主图设置 - 数据与比较”中选择横坐标和左纵轴参数。
 4. 在“已载入文件”列表中勾选需要显示的曲线，并调整顺序、颜色、线型和点型。
@@ -1135,6 +1137,6 @@ GasStudy_2026-07-10/
 garfield_gas_workbench_pro.html
 ```
 
-文件日期：2026-07-10。
+文件日期：2026-07-14。
 
 网页后续若新增或修改功能，应同步更新本说明中的界面名称、换算公式和限制条件。
