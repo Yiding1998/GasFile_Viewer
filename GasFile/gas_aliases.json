@@ -1,0 +1,20 @@
+{
+  "groups": [
+    {"canonical": "Ar", "aliases": ["argon"]},
+    {"canonical": "Ne", "aliases": ["neon"]},
+    {"canonical": "CO2", "aliases": ["carbon dioxide"]},
+    {"canonical": "CH4", "aliases": ["methane"]},
+    {"canonical": "CF4", "aliases": ["carbon tetrafluoride"]},
+    {"canonical": "DME", "aliases": ["dimethyl ether"]},
+    {"canonical": "iC4H10", "aliases": ["IC4H10", "isoC4H10", "i-C4H10", "isobutane"]},
+    {"canonical": "C2H2F4", "aliases": ["R134a", "HFC134a", "C2H2F4"]},
+    {"canonical": "SF6", "aliases": ["sulfur hexafluoride"]},
+    {"canonical": "CF3Br", "aliases": ["halon1301", "Halon1301"]},
+    {"canonical": "C2H6", "aliases": ["ethane"]},
+    {"canonical": "C2F6", "aliases": []},
+    {"canonical": "C3F8", "aliases": []},
+    {"canonical": "C3H6", "aliases": ["propylene"]},
+    {"canonical": "C3H8", "aliases": ["propane"]},
+    {"canonical": "CHF3", "aliases": []}
+  ]
+}

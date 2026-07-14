@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gas File Search</title>
+<style>
+:root{--bg:#f4f6f8;--panel:#fff;--text:#17202c;--muted:#637083;--line:#d8e0ea;--primary:#0f6b5c;--primary-dark:#0a5146;--soft:#edf7f5;--warn:#8a5a00;--bad:#a8201a;--ok:#0f6b3f}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif}header{background:#183044;color:#fff;padding:24px 18px}.wrap{max-width:1320px;margin:0 auto}h1{margin:0 0 6px;font-size:28px}header p{margin:0;color:#d7e3ec}.bar{display:grid;grid-template-columns:2fr repeat(4,minmax(130px,1fr));gap:10px;align-items:end;background:var(--panel);border-bottom:1px solid var(--line);padding:14px 18px;position:sticky;top:0;z-index:3}.control{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}input,select,button{font:inherit;min-height:38px;border:1px solid #c9d4df;border-radius:7px;background:#fff;color:var(--text);padding:7px 9px}button{cursor:pointer;font-weight:700;background:var(--primary);border-color:var(--primary);color:#fff}button:hover{background:var(--primary-dark)}main{padding:18px}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}.metric{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px}.metric b{display:block;font-size:22px}.metric span{font-size:12px;color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}.tools{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:#f7fafc;border-radius:999px;padding:4px 8px;font-size:12px;color:#415066}.chip.ok{background:#e9f7ef;color:var(--ok)}.chip.warn{background:#fff5df;color:var(--warn)}.chip.bad{background:#ffeceb;color:var(--bad)}table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:9px 10px;text-align:left;vertical-align:top}th{position:sticky;top:67px;background:#eef3f7;z-index:2;color:#314055}td.path{font-family:"SFMono-Regular",Consolas,monospace;font-size:12px;word-break:break-all}.component{display:inline-flex;margin:1px 4px 3px 0;padding:3px 7px;border-radius:999px;background:var(--soft);color:#0d5d50;font-weight:700}.muted{color:var(--muted)}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions a,.actions button{min-height:30px;border-radius:6px;padding:5px 8px;text-decoration:none;font-size:12px}.actions a{background:#eef3f7;color:#193247;border:1px solid #cbd6e0}.actions button{background:#fff;color:#193247;border-color:#cbd6e0}.empty{padding:30px;text-align:center;color:var(--muted)}.status{padding:10px 12px;border-bottom:1px solid var(--line);background:#f7fafc;color:#43546b;font-size:13px}.hidden{display:none}@media(max-width:900px){.bar{grid-template-columns:1fr 1fr}.bar .wide{grid-column:1/-1}th{top:150px}}@media(max-width:620px){.bar{position:static;grid-template-columns:1fr}th{position:static}table,tbody,tr,td{display:block}thead{display:none}tr{border-bottom:1px solid var(--line);padding:8px 0}td{border:0;padding:5px 10px}td::before{content:attr(data-label);display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:2px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Gas File Search</h1><p>Search Garfield gas files by parsed gas components, fractions, temperature, pressure, and path.</p></div></header>
+<section class="bar">
+<label class="control wide">Search<input id="query" placeholder="Examples: Ar CO2, SF6 10, C2H2F4 iC4H10"></label>
+<label class="control">Component<select id="component"><option value="">All components</option></select></label>
+<label class="control">Match<select id="matchMode"><option value="all">All terms</option><option value="any">Any term</option></select></label>
+<label class="control">Status<select id="statusFilter"><option value="">All statuses</option><option value="ok">ok</option><option value="fallback">fallback</option><option value="needs_review">needs_review</option><option value="error">error</option></select></label>
+<label class="control">Sort<select id="sortBy"><option value="path">Path</option><option value="components">Components</option><option value="pressure">Pressure</option><option value="temperature">Temperature</option><option value="status">Status</option></select></label>
+</section>
+<main class="wrap">
+<div id="loadStatus" class="status">Loading GasFile/gas_index.json ...</div>
+<section class="summary">
+<div class="metric"><b id="totalFiles">0</b><span>Total indexed files</span></div>
+<div class="metric"><b id="shownFiles">0</b><span>Current results</span></div>
+<div class="metric"><b id="okFiles">0</b><span>Parsed from Identifier</span></div>
+<div class="metric"><b id="reviewFiles">0</b><span>Need review</span></div>
+</section>
+<section class="panel">
+<div class="tools"><div class="chips" id="activeChips"></div><div class="actions"><button id="resetBtn" type="button">Reset</button></div></div>
+<div id="empty" class="empty hidden">No matching gas files.</div>
+<div style="overflow:auto"><table id="resultTable"><thead><tr><th>Components</th><th>Conditions</th><th>Identifier</th><th>Path</th><th>Actions</th></tr></thead><tbody id="tbody"></tbody></table></div>
+</section>
+</main>
+<script>
+const state={files:[],filtered:[]};
+const el=id=>document.getElementById(id);
+function norm(s){return String(s||'').toLowerCase();}
+function componentLabel(item){return item.fraction===null||item.fraction===undefined?item.name:`${item.name} ${item.fraction}%`;}
+function statusClass(status){return status==='ok'?'ok':status==='fallback'?'warn':status==='needs_review'||status==='error'?'bad':'';}
+function matchesTerms(file,terms,mode){if(!terms.length)return true;const hay=norm(file.search_text||[file.path,file.identifier,file.component_key,file.pressure,file.temperature].join(' '));const checks=terms.map(t=>hay.includes(norm(t)));return mode==='any'?checks.some(Boolean):checks.every(Boolean);}
+function applyFilters(){const q=el('query').value.trim();const terms=q.split(/[\s,;+]+/).filter(Boolean);const comp=el('component').value;const status=el('statusFilter').value;const mode=el('matchMode').value;let rows=state.files.filter(file=>matchesTerms(file,terms,mode));if(comp)rows=rows.filter(file=>(file.component_names||[]).includes(comp));if(status)rows=rows.filter(file=>file.parse_status===status);const sortBy=el('sortBy').value;rows.sort((a,b)=>norm(sortValue(a,sortBy)).localeCompare(norm(sortValue(b,sortBy)),undefined,{numeric:true}));state.filtered=rows;render(rows,terms,comp,status);}
+function sortValue(file,key){if(key==='components')return file.component_key||'';if(key==='pressure')return file.pressure||'';if(key==='temperature')return file.temperature||'';if(key==='status')return file.parse_status||'';return file.path||'';}
+function render(rows,terms,comp,status){el('shownFiles').textContent=rows.length;const chips=[];if(terms.length)chips.push(`<span class="chip">Terms: ${terms.join(', ')}</span>`);if(comp)chips.push(`<span class="chip ok">Component: ${comp}</span>`);if(status)chips.push(`<span class="chip ${statusClass(status)}">Status: ${status}</span>`);el('activeChips').innerHTML=chips.join('');el('empty').classList.toggle('hidden',rows.length!==0);el('resultTable').classList.toggle('hidden',rows.length===0);el('tbody').innerHTML=rows.map(file=>{const comps=(file.components||[]).map(c=>`<span class="component">${componentLabel(c)}</span>`).join('')||'<span class="muted">Unknown</span>';const conditions=[file.pressure,file.temperature].filter(Boolean).join(' / ')||'<span class="muted">Not recorded</span>';const href=encodeURI(file.path);return `<tr><td data-label="Components">${comps}<div><span class="chip ${statusClass(file.parse_status)}">${file.parse_status}</span> <span class="chip">${file.source||'unknown'}</span></div></td><td data-label="Conditions">${conditions}</td><td data-label="Identifier">${escapeHtml(file.identifier||'')}</td><td data-label="Path" class="path">${escapeHtml(file.path)}</td><td data-label="Actions"><div class="actions"><a href="${href}" target="_blank" rel="noopener">Open</a><a href="${href}" download>Download</a><button type="button" data-copy="${escapeAttr(file.path)}">Copy path</button></div></td></tr>`}).join('');document.querySelectorAll('[data-copy]').forEach(btn=>btn.addEventListener('click',()=>copyText(btn.dataset.copy,btn)));}
+function escapeHtml(s){return String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
+function escapeAttr(s){return escapeHtml(s).replace(/'/g,'&#39;');}
+function copyText(text,btn){navigator.clipboard?.writeText(text).then(()=>{const old=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=old,900);});}
+function populateComponents(){const set=new Set();state.files.forEach(file=>(file.component_names||[]).forEach(name=>set.add(name)));const options=['<option value="">All components</option>'].concat([...set].sort((a,b)=>a.localeCompare(b)).map(name=>`<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`));el('component').innerHTML=options.join('');}
+function updateMetrics(data){const counts=data.summary?.status_counts||{};el('totalFiles').textContent=state.files.length;el('okFiles').textContent=counts.ok||0;el('reviewFiles').textContent=(counts.needs_review||0)+(counts.error||0);}
+async function init(){try{const res=await fetch('GasFile/gas_index.json',{cache:'no-store'});if(!res.ok)throw new Error(`${res.status} ${res.statusText}`);const data=await res.json();state.files=data.files||[];populateComponents();updateMetrics(data);el('loadStatus').textContent=`Loaded ${state.files.length} indexed files. Generated: ${data.summary?.generated_at_utc||'unknown'}`;['query','component','matchMode','statusFilter','sortBy'].forEach(id=>el(id).addEventListener('input',applyFilters));el('resetBtn').addEventListener('click',()=>{el('query').value='';el('component').value='';el('statusFilter').value='';el('matchMode').value='all';el('sortBy').value='path';applyFilters();});applyFilters();}catch(err){el('loadStatus').textContent=`Failed to load GasFile/gas_index.json: ${err.message}. Use GitHub Pages or run a local web server from the repository root.`;}}
+init();
+</script>
+</body>
+</html>

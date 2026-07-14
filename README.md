@@ -16,3 +16,16 @@ Click the corresponding documents below to open them locally or on GitHub:
 - [English User Manual (PDF)](Doc/Garfield_gas_workbench_pro_User_Manual_EN.pdf)
 - [Chinese User Manual (Markdown)](Doc/Garfield_gas_workbench_pro_%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.md)
 - [Chinese User Manual (PDF)](Doc/Garfield_gas_workbench_pro_%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.pdf)
+
+## Gas File Search
+
+A searchable gas-file index is available through [gas_file_search.html](gas_file_search.html). The search page loads [GasFile/gas_index.json](GasFile/gas_index.json), so it works well on GitHub Pages and can also be used locally from a simple web server.
+
+When new gas files are added under `GasFile/`, rebuild the index before committing:
+
+```bash
+python3 tools/build_gas_index.py --pretty
+```
+
+The index builder reads each Garfield gas file and prefers the internal `Identifier:` line, for example `Ar 90%, CO2 10%, T=293.15 K, p=1 atm`. Files that cannot be fully parsed are listed in [GasFile/gas_index_report.md](GasFile/gas_index_report.md). Special cases can be corrected in [GasFile/gas_metadata_override.json](GasFile/gas_metadata_override.json).
+
