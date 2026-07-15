@@ -33,13 +33,13 @@ No installation of Garfield++, ROOT, Python, or a web server is required. Gas fi
 
 Use a recent version of Google Chrome, Microsoft Edge, or Mozilla Firefox. A desktop browser with a screen width of at least 1280 px is recommended.
 
-For local use, keep `garfield_gas_workbench_pro_english.html` and `gas-file-parser.js` in the same directory, then open the HTML file directly. If the browser restricts local storage, plotting templates may not be saved permanently. The **Save Full Project** function can still be used in that case.
+For local use, download and open only `garfield_workbench_offline_en.html`. This single-file version embeds every JavaScript dependency and can read local `.gas` files. If the browser restricts local storage, plotting templates may not be saved permanently. The **Save Full Project** function can still be used in that case.
 
 # 2. Quick Start
 
 ## 2.1 Minimal Workflow
 
-1. Open the [English workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html), or open `garfield_gas_workbench_pro_english.html` locally with `gas-file-parser.js` beside it.
+1. Open the [English workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html), or download and open the single-file offline version `garfield_workbench_offline_en.html`.
 2. Drag one or more `.gas` files into the upload area, or click **Add Files**.
 3. In **Main Plot Settings - Data and Comparison**, select the X variable and the left Y parameter.
 4. In the loaded-file list, enable the curves to display and adjust their order, color, line style, and marker style.

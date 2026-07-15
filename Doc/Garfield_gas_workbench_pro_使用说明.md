@@ -33,13 +33,13 @@ garfield_gas_workbench_pro.html
 
 推荐使用最新版 Chrome、Microsoft Edge 或 Firefox。建议在桌面浏览器中使用，屏幕宽度不低于 1280 px。
 
-本地使用时，请将 `garfield_gas_workbench_pro.html` 与 `gas-file-parser.js` 放在同一目录，再直接打开 HTML。若浏览器的安全策略限制本地存储，绘图模板可能无法永久保存，此时仍可使用“保存完整项目”功能。
+本地使用时，只需下载 `garfield_workbench_offline_zh.html` 并直接打开。该单文件版本已内嵌全部 JavaScript 依赖，可读取本地 `.gas` 文件。若浏览器的安全策略限制本地存储，绘图模板可能无法永久保存，此时仍可使用“保存完整项目”功能。
 
 # 2. 快速上手
 
 ## 2.1 最简操作流程
 
-1. 打开[中文界面的气体文件工作台](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro.html)，或者将 `garfield_gas_workbench_pro.html` 与 `gas-file-parser.js` 放在同一目录后本地打开。
+1. 打开[中文界面的气体文件工作台](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro.html)，或者下载并打开单文件离线版 `garfield_workbench_offline_zh.html`。
 2. 将一个或多个 `.gas` 文件拖入页面顶部区域，或点击“添加文件”。
 3. 在“主图设置 - 数据与比较”中选择横坐标和左纵轴参数。
 4. 在“已载入文件”列表中勾选需要显示的曲线，并调整顺序、颜色、线型和点型。

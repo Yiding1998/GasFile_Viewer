@@ -4,10 +4,13 @@
 
 GasFile_Viewer provides browser-based tools for viewing and searching Garfield++ gas files. The repository contains the gas-file collection, a standalone gas-file viewer, and a content-derived numeric search index.
 
+The [GitHub Pages root entry](https://yiding1998.github.io/GasFile_Viewer/) opens the Chinese or English workbench according to the browser language.
+
 ## Available Tools
 
 - [Quick Start: Click and Use](QUICK_START.md#english): no installation or setup, with Chinese and English in one document.
 - [Open Garfield Gas Workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html): open the English interface to search the repository, load local or indexed gas files, compare, plot, analyze, and export data.
+- [Download the English single-file offline workbench](garfield_workbench_offline_en.html): save this one HTML file and open it directly to read local gas files.
 - [Open Gas File Search](https://yiding1998.github.io/GasFile_Viewer/gas_file_search.html): search and rank indexed files by gas components, fractions, temperature, pressure, aliases, identifier, or path.
 
 ## Using Garfield Gas Workbench
@@ -38,7 +41,11 @@ The X-axis selector includes the three field coordinates and every built-in or u
 
 Tooltips, synchronized readout, and CSV exports retain the source E, E/p, E/N, magnetic field, and angle for every point. Horizontal parameter uncertainty bars are available when the selected X parameter has uncertainty data. Plot templates and complete project files preserve the X parameter, point order, and uncertainty settings.
 
-For offline use, keep [garfield_gas_workbench_pro_english.html](garfield_gas_workbench_pro_english.html) and [gas-file-parser.js](gas-file-parser.js) in the same directory, then open the HTML file in a modern browser. Local file loading, plotting, analysis, and project operations remain available; repository search requires GitHub Pages or a local web server that also serves the repository files.
+### Download One HTML for Offline Use
+
+Download the [English single-file offline workbench](garfield_workbench_offline_en.html), then open it directly. No installation, repository checkout, or additional JavaScript file is required. You can select or drop one or more local `.gas` files and continue to use plotting, analysis, export, and project operations.
+
+Repository search in the standalone file is limited by browser `file://` security rules; use the GitHub Pages workbench to search repository files. Developers should edit [garfield_gas_workbench_pro_english.html](garfield_gas_workbench_pro_english.html) and the shared modules, then run `python3 tools/build_standalone_workbenches.py`; do not edit the generated offline file directly.
 
 ## User Manuals
 
@@ -96,7 +103,7 @@ Stop the server with **Ctrl+C**. Opening the page through a **file://** address 
 - **Within range** only returns files inside the fraction, temperature, and relative-pressure tolerances.
 - **Exact** requires an identical component set and exact values for every entered numeric parameter.
 
-**Exact component set** rejects files containing additional gases. Disable it to allow mixtures that contain the requested components plus other gases.
+**Exact component set** is off by default, so mixtures may contain the requested components plus additional gases. Enable it only when results must exclude every additional component.
 
 ### Composition and Conditions
 

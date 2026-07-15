@@ -7,13 +7,18 @@ on:
       - "GasFile/**"
       - "tools/build_gas_index.py"
       - "gas_file_search.html"
-      - "gas-search-core.js"
-      - "gas-file-parser.js"
-      - "workbench-library.js"
+      - "assets/js/**"
       - "garfield_gas_workbench_pro.html"
       - "garfield_gas_workbench_pro_english.html"
+      - "garfield_workbench_offline_zh.html"
+      - "garfield_workbench_offline_en.html"
+      - "index.html"
+      - "legacy/**"
+      - "garfield_gas_multi_file_viewer_advanced_legend.html"
+      - "tools/build_standalone_workbenches.py"
       - "README.md"
       - "README.zh-CN.md"
+      - "QUICK_START.md"
       - "Doc/**"
       - "tests/**"
       - ".github/workflows/gas-search.yml"
@@ -22,11 +27,18 @@ on:
       - "GasFile/**"
       - "tools/build_gas_index.py"
       - "gas_file_search.html"
-      - "gas-search-core.js"
-      - "gas-file-parser.js"
-      - "workbench-library.js"
+      - "assets/js/**"
       - "garfield_gas_workbench_pro.html"
       - "garfield_gas_workbench_pro_english.html"
+      - "garfield_workbench_offline_zh.html"
+      - "garfield_workbench_offline_en.html"
+      - "index.html"
+      - "legacy/**"
+      - "garfield_gas_multi_file_viewer_advanced_legend.html"
+      - "tools/build_standalone_workbenches.py"
+      - "README.md"
+      - "README.zh-CN.md"
+      - "QUICK_START.md"
       - "Doc/**"
       - "tests/**"
       - ".github/workflows/gas-search.yml"
@@ -53,6 +65,8 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Test shared gas parser against repository files
         run: node tests/test-gas-file-parser.js
+      - name: Verify single-file offline workbenches
+        run: python3 tools/build_standalone_workbenches.py --check
       - name: Build deployment index from gas files
         run: python3 tools/build_gas_index.py --pretty
       - name: Verify generated index

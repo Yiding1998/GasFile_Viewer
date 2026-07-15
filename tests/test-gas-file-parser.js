@@ -3,7 +3,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const parser=require('../gas-file-parser.js');
+const parser=require('../assets/js/gas-file-parser.js');
 
 const root=path.resolve(__dirname,'..');
 const gasRoot=path.join(root,'GasFile');

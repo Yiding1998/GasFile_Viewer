@@ -12,6 +12,8 @@
 
 打开后，将一个或多个 `.gas` 文件拖入网页，即可查看、比较和绘图。
 
+[下载只需一个 HTML 的中文离线工作台](garfield_workbench_offline_zh.html)：保存后双击打开，即可读取本地 `.gas` 文件。
+
 ### 直接查找气体文件
 
 [点击打开气体文件检索程序](https://yiding1998.github.io/GasFile_Viewer/gas_file_search.html)
@@ -33,6 +35,8 @@
 [Open the English Garfield Gas Workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html)
 
 Drag one or more `.gas` files into the page to inspect, compare, and plot them.
+
+[Download the English single-file offline workbench](garfield_workbench_offline_en.html): save this one HTML file and open it directly to read local `.gas` files.
 
 ### Find a Gas File
 

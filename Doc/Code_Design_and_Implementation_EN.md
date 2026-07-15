@@ -44,11 +44,11 @@ flowchart LR
     B --> E[gas_index.json]
     B --> F[gas_index_report.md]
     E --> G[gas_file_search.html]
-    E --> H[workbench-library.js]
-    I[gas-search-core.js] --> G
+    E --> H[assets/js/workbench-library.js]
+    I[assets/js/gas-search-core.js] --> G
     I --> H
     H --> J[Chinese and English Pro workbenches]
-    O[gas-file-parser.js] --> J
+    O[assets/js/gas-file-parser.js] --> J
     K[Local .gas files] --> J
     J --> L[SVG/PNG/PDF/CSV/HTML/project JSON]
     M[GitHub Actions] --> B
@@ -207,7 +207,7 @@ A meaningful change to file content, path, aliases, overrides, or parser behavio
 
 ## 5. Shared Search Core
 
-File: `gas-search-core.js`
+File: `assets/js/gas-search-core.js`
 
 An immediately invoked function exports only a frozen `window.GasSearchCore`, preventing consumers from replacing the core API accidentally. It exposes unit constants, condition conversions, `evaluate`, and `sortResults`.
 
@@ -219,7 +219,7 @@ Both interfaces map controls to the same normalized shape:
 {
   mode: "nearest" | "range" | "exact",
   components: [{name, fraction, tolerance}],
-  exactSet: true,
+  exactSet: false,
   temperature: 293.15,
   temperatureTolerance: 5,
   pressure: 101325,
@@ -231,6 +231,8 @@ Both interfaces map controls to the same normalized shape:
 ```
 
 Temperature is in K, pressure is in Pa, component tolerance is in percentage points, and pressure tolerance is relative percent.
+
+Both interfaces default `exactSet` to `false`. Strict component-set matching is enabled only when the user selects **Exact component set** or enters `exact` mode.
 
 ### 5.2 Candidate filtering
 
@@ -291,7 +293,7 @@ Denominators have a floor of `0.01`. The score is a weighted mean with weights 2
 
 File: `gas_file_search.html`
 
-The page contains its structure, responsive CSS, and controller code, and loads `gas-search-core.js` as its only shared dependency.
+The page contains its structure, responsive CSS, and controller code, and loads `assets/js/gas-search-core.js` as its only shared dependency.
 
 ### 6.1 State and initialization
 
@@ -313,7 +315,7 @@ Each result can open or download the raw file, copy its path, or launch either l
 
 ## 7. Workbench Repository Integration
 
-File: `workbench-library.js`
+File: `assets/js/workbench-library.js`
 
 The script loads after the workbench and requires both `window.GasSearchCore` and `window.GarfieldWorkbenchBridge`. If either is missing, it exits without disrupting local workbench features.
 
@@ -353,8 +355,12 @@ Files:
 
 - `garfield_gas_workbench_pro.html`: Chinese.
 - `garfield_gas_workbench_pro_english.html`: English.
+- `garfield_workbench_offline_zh.html`: generated Chinese single-file offline edition.
+- `garfield_workbench_offline_en.html`: generated English single-file offline edition.
 
-Each HTML file defines controls and layout, while inline JavaScript handles state, plots, analysis, and export. Both pages load `gas-file-parser.js` before their localized wrapper and load the shared search core and repository library at the end.
+Each HTML file defines controls and layout, while inline JavaScript handles state, plots, analysis, and export. Both pages load `assets/js/gas-file-parser.js` before their localized wrapper and load the shared search core and repository library at the end.
+
+`tools/build_standalone_workbenches.py` embeds the three shared JavaScript files in both source workbenches. The generated editions can be opened through `file://` and read user-selected local gas files, while development remains centralized in the shared modules and source workbenches. Its `--check` mode prevents generated files from falling behind their sources.
 
 ### 8.1 Runtime state
 
@@ -371,7 +377,7 @@ A gas entry combines immutable parsed data with color, line and marker style, op
 
 ## 9. Garfield Parsing in the Workbench
 
-File: `gas-file-parser.js`
+File: `assets/js/gas-file-parser.js`
 
 The module exports `GarfieldGasParser.parse` in browsers and `module.exports` in Node. The localized pages keep only a small `parseGasFile` wrapper that supplies translated error messages and the missing-Identifier label. Internal helpers include `parseLevels`, `numbers`, and `section`.
 
@@ -446,7 +452,7 @@ The two sources must not be merged blindly. A Mixture array stores positions and
 
 ### 10.2 Repository files
 
-`workbench-library.js` supplies verified text and provenance. `addGasTexts` deduplicates by hash or path and calls `parseGasFile` independently for each item, so one failure does not prevent the remaining files from loading.
+`assets/js/workbench-library.js` supplies verified text and provenance. `addGasTexts` deduplicates by hash or path and calls `parseGasFile` independently for each item, so one failure does not prevent the remaining files from loading.
 
 ### 10.3 Undo and redo
 
@@ -569,7 +575,7 @@ New fields should have defaults and preserve version 2 compatibility whenever po
 
 ## 14. Legacy Viewer
 
-`garfield_gas_multi_file_viewer_advanced_legend.html` is an independent Chinese single-page application with its own parser, plotting, interactions, legend, and exports. It does not load the shared search scripts or use the Pro project format.
+`legacy/garfield_gas_multi_file_viewer_advanced_legend.html` is an independent Chinese single-page application with its own parser, plotting, interactions, legend, and exports. The root file with the same name only preserves the old URL. The legacy application does not load the shared search scripts or use the Pro project format.
 
 Maintain it for established workflows and reproduction. New search, analysis, and project features normally belong only in the two Pro files. When fixing a fundamental Garfield parsing defect, assess the legacy parser separately because no code is shared.
 
@@ -623,7 +629,7 @@ The path list includes `Doc/**`, so an independent user-manual or developer-guid
 1. Parse and emit it in `build_gas_index.py`.
 2. Raise `SCHEMA_VERSION` if compatibility requires it.
 3. Test normal, missing, and malformed inputs.
-4. Update `gas-search-core.js` or page consumers.
+4. Update `assets/js/gas-search-core.js` or page consumers.
 5. Update localized documentation and reporting.
 6. Rebuild and check compatibility with older entry points.
 
@@ -647,7 +653,7 @@ Weight changes alter the meaning of “nearest” for every user and should be d
 
 ### 17.4 Add a language
 
-The workbench is not currently a runtime language-pack architecture. A third language means another synchronized Pro page, while `workbench-library.js` can add another string set. Before long-term support for another language, extracting shared workbench logic into JavaScript modules is the lower-risk design.
+The workbench is not currently a runtime language-pack architecture. A third language means another synchronized Pro page, while `assets/js/workbench-library.js` can add another string set. Before long-term support for another language, extracting shared workbench logic into JavaScript modules is the lower-risk design.
 
 ## 18. Localization Synchronization Rules
 

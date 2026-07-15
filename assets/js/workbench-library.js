@@ -110,7 +110,7 @@ dialog.innerHTML=`
   <section class="gas-library-query">
     <div class="gas-library-tools">
       <label class="gas-library-field">${esc(text.mode)}<select id="gasLibraryMode"><option value="nearest">${esc(text.nearest)}</option><option value="range">${esc(text.range)}</option><option value="exact">${esc(text.exact)}</option></select></label>
-      <label class="check"><input id="gasLibraryExactSet" type="checkbox" checked> ${esc(text.exactSet)}</label>
+      <label class="check"><input id="gasLibraryExactSet" type="checkbox"> ${esc(text.exactSet)}</label>
       <label class="gas-library-field">${esc(text.sort)}<select id="gasLibrarySort"><option value="overall">${esc(text.overall)}</option><option value="composition">${esc(text.mixSort)}</option><option value="temperature">${esc(text.tempSort)}</option><option value="pressure">${esc(text.pressureSort)}</option><option value="path">${esc(text.pathSort)}</option></select></label>
       <button id="gasLibraryRefresh" type="button">${esc(text.refresh)}</button>
       <a href="gas_file_search.html" target="_blank" rel="noopener">${esc(text.fullSearch)}</a>
