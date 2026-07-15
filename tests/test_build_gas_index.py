@@ -38,6 +38,7 @@ class GasParsingTests(unittest.TestCase):
             "argon": "Ar",
             "co2": "CO2",
             "carbon dioxide": "CO2",
+            "ic4h10": "iC4H10",
         }
 
     def test_identifier_parses_aliases_and_numeric_values(self) -> None:
@@ -51,6 +52,24 @@ class GasParsingTests(unittest.TestCase):
         )
         self.assertEqual(parsed["temperature"], "293.15 K")
         self.assertEqual(parsed["pressure"], "1 atm")
+
+    def test_identifier_names_use_nonzero_mixture_fractions(self) -> None:
+        parsed = gas_index.parse_identifier(
+            """
+Identifier: Ar/iC4H10, p = 1 atm, T = 293.15 K
+Mixture:
+0 95 0 0 5 0
+The gas tables follow:
+""",
+            self.aliases,
+        )
+        self.assertEqual(
+            parsed["components"],
+            [{"name": "Ar", "fraction": 95}, {"name": "iC4H10", "fraction": 5}],
+        )
+        self.assertEqual(parsed["temperature"], "293.15 K")
+        self.assertEqual(parsed["pressure"], "1 atm")
+        self.assertEqual(parsed["source"], "identifier_mixture")
 
     def test_record_quality_and_match_ready_fields(self) -> None:
         record = gas_index.finalize_record(

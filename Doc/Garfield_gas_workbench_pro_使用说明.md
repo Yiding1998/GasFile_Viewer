@@ -2,7 +2,7 @@
 title: "Garfield++ 气体输运参数科研绘图与分析工作台"
 subtitle: "使用说明书"
 author: "适用于 garfield_gas_workbench_pro.html"
-date: "2026-07-14"
+date: "2026-07-15"
 lang: zh-CN
 ---
 
@@ -33,13 +33,13 @@ garfield_gas_workbench_pro.html
 
 推荐使用最新版 Chrome、Microsoft Edge 或 Firefox。建议在桌面浏览器中使用，屏幕宽度不低于 1280 px。
 
-由于程序是单 HTML 文件，可以直接双击打开。若浏览器的安全策略限制本地存储，绘图模板可能无法永久保存，此时仍可使用“保存完整项目”功能。
+本地使用时，请将 `garfield_gas_workbench_pro.html` 与 `gas-file-parser.js` 放在同一目录，再直接打开 HTML。若浏览器的安全策略限制本地存储，绘图模板可能无法永久保存，此时仍可使用“保存完整项目”功能。
 
 # 2. 快速上手
 
 ## 2.1 最简操作流程
 
-1. 打开[中文界面的气体文件工作台](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro.html)，或者在本地双击打开 `garfield_gas_workbench_pro.html`。
+1. 打开[中文界面的气体文件工作台](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro.html)，或者将 `garfield_gas_workbench_pro.html` 与 `gas-file-parser.js` 放在同一目录后本地打开。
 2. 将一个或多个 `.gas` 文件拖入页面顶部区域，或点击“添加文件”。
 3. 在“主图设置 - 数据与比较”中选择横坐标和左纵轴参数。
 4. 在“已载入文件”列表中勾选需要显示的曲线，并调整顺序、颜色、线型和点型。
@@ -1172,6 +1172,6 @@ GasStudy_2026-07-10/
 garfield_gas_workbench_pro.html
 ```
 
-文件日期：2026-07-14。
+文件日期：2026-07-15。
 
 网页后续若新增或修改功能，应同步更新本说明中的界面名称、换算公式和限制条件。

@@ -1,34 +1,34 @@
 {
   "schema_version": 3,
   "summary": {
-    "generated_at_utc": "2026-07-14T13:55:27+00:00",
-    "total_files": 441,
-    "match_ready_files": 440,
+    "generated_at_utc": "2026-07-15T06:53:56+00:00",
+    "total_files": 477,
+    "match_ready_files": 477,
     "status_counts": {
-      "fallback": 1,
-      "ok": 440
+      "ok": 477
     },
-    "quality_flag_counts": {
-      "missing_component_fraction": 1
-    },
+    "quality_flag_counts": {},
     "component_counts": {
-      "iC4H10": 237,
-      "Ar": 201,
+      "iC4H10": 253,
+      "Ar": 208,
       "C2H2F4": 187,
       "SF6": 181,
       "CO2": 76,
-      "CF4": 50,
-      "CH4": 46,
-      "Ne": 40,
+      "CF4": 56,
+      "CH4": 47,
+      "Ne": 45,
       "C2H6": 26,
       "DME": 24,
+      "Xe": 22,
       "CF3Br": 13,
-      "O2": 3,
+      "TMA": 11,
+      "O2": 4,
       "C2F6": 1,
       "C3F8": 1,
       "C3H6": 1,
       "C3H8": 1,
-      "CHF3": 1
+      "CHF3": 1,
+      "He": 1
     }
   },
   "files": [
@@ -10927,22 +10927,22 @@
       "path": "GasFile/Ar/Other_Gas_Mixtures/ar_70_co2_30_1000mbar.gas",
       "file_name": "ar_70_co2_30_1000mbar.gas",
       "directory": "GasFile/Ar/Other_Gas_Mixtures",
-      "identifier": "Ar/CO2, p = 1 atm, T = 293.15 K",
+      "identifier": "CO2 30%, Ar 70%, T=293.15 K, p=1 atm",
       "components": [
         {
-          "name": "Ar",
-          "fraction": null
+          "name": "CO2",
+          "fraction": 30
         },
         {
-          "name": "CO2",
-          "fraction": null
+          "name": "Ar",
+          "fraction": 70
         }
       ],
       "temperature": "293.15 K",
-      "pressure": "1000 mbar",
-      "source": "path_fallback",
-      "size_bytes": 12591,
-      "sha256": "c584761ce1b6aa87876c903b37db387790cc6de91441243793fe039f361f1114",
+      "pressure": "1 atm",
+      "source": "identifier",
+      "size_bytes": 12597,
+      "sha256": "3ddae92d1666d4ae5e774a5b73853ee3d255db82e1b62e237ab203ec1da9185b",
       "coverage": {
         "format_version": 12,
         "map_2d": false,
@@ -10968,25 +10968,23 @@
         }
       },
       "component_names": [
-        "Ar",
-        "CO2"
+        "CO2",
+        "Ar"
       ],
-      "component_key": "Ar + CO2",
+      "component_key": "CO2 + Ar",
       "component_aliases": [
         "argon",
         "carbon dioxide"
       ],
       "temperature_k": 293.15,
-      "pressure_pa": 100000,
-      "pressure_atm": 0.986923266716,
-      "composition_sum_pct": null,
-      "quality_flags": [
-        "missing_component_fraction"
-      ],
-      "data_quality": "warning",
-      "match_ready": false,
-      "parse_status": "fallback",
-      "search_text": "gasfile/ar/other_gas_mixtures/ar_70_co2_30_1000mbar.gas ar/co2, p = 1 atm, t = 293.15 k ar + co2 argon carbon dioxide 293.15 k 1000 mbar"
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_70_co2_30_1000mbar.gas co2 30%, ar 70%, t=293.15 k, p=1 atm co2 + ar argon carbon dioxide 293.15 k 1 atm"
     },
     {
       "path": "GasFile/Ar/Other_Gas_Mixtures/ar_80_co2_20_0T.gas",
@@ -11367,7 +11365,8 @@
       "component_key": "Ar + CH4 + O2",
       "component_aliases": [
         "argon",
-        "methane"
+        "methane",
+        "oxygen"
       ],
       "temperature_k": 293.15,
       "pressure_pa": 101325,
@@ -11377,7 +11376,7 @@
       "data_quality": "ok",
       "match_ready": true,
       "parse_status": "ok",
-      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_20ppm.gas ar 89.9982%, ch4 9.9998%, o2 0.002%, t=293.15 k, p=1 atm ar + ch4 + o2 argon methane 293.15 k 1 atm"
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_20ppm.gas ar 89.9982%, ch4 9.9998%, o2 0.002%, t=293.15 k, p=1 atm ar + ch4 + o2 argon methane oxygen 293.15 k 1 atm"
     },
     {
       "path": "GasFile/Ar/Other_Gas_Mixtures/ar_90_ch4_10_O2_20ppm_830mbar.gas",
@@ -11498,7 +11497,8 @@
       "component_key": "Ar + CH4 + O2",
       "component_aliases": [
         "argon",
-        "methane"
+        "methane",
+        "oxygen"
       ],
       "temperature_k": 293.15,
       "pressure_pa": 101325,
@@ -11508,7 +11508,7 @@
       "data_quality": "ok",
       "match_ready": true,
       "parse_status": "ok",
-      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_300ppm.gas ar 89.973%, ch4 9.997%, o2 0.03%, t=293.15 k, p=1 atm ar + ch4 + o2 argon methane 293.15 k 1 atm"
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_300ppm.gas ar 89.973%, ch4 9.997%, o2 0.03%, t=293.15 k, p=1 atm ar + ch4 + o2 argon methane oxygen 293.15 k 1 atm"
     },
     {
       "path": "GasFile/Ar/Other_Gas_Mixtures/ar_90_ch4_10_O2_500ppm.gas",
@@ -11566,7 +11566,8 @@
       "component_key": "Ar + CH4 + O2",
       "component_aliases": [
         "argon",
-        "methane"
+        "methane",
+        "oxygen"
       ],
       "temperature_k": 293.15,
       "pressure_pa": 101325,
@@ -11576,7 +11577,7 @@
       "data_quality": "ok",
       "match_ready": true,
       "parse_status": "ok",
-      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_500ppm.gas ar 89.955%, ch4 9.995%, o2 0.05%, t=293.15 k, p=1 atm ar + ch4 + o2 argon methane 293.15 k 1 atm"
+      "search_text": "gasfile/ar/other_gas_mixtures/ar_90_ch4_10_o2_500ppm.gas ar 89.955%, ch4 9.995%, o2 0.05%, t=293.15 k, p=1 atm ar + ch4 + o2 argon methane oxygen 293.15 k 1 atm"
     },
     {
       "path": "GasFile/Ar/Other_Gas_Mixtures/ar_93_co2_7.gas",
@@ -29710,6 +29711,2305 @@
       "match_ready": true,
       "parse_status": "ok",
       "search_text": "gasfile/singlepuregas/ic4h10.gas ic4h10 100%, t=293.15 k, p=1 atm ic4h10 i-c4h10 isobutane isoc4h10 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/CF4_100.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "CF4_100.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "CF4, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "CF4",
+          "fraction": 100
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "20aadbc1aeb9fff2ed9268aed829066bac21b8c710ccfd3dcf72d0c8c2ec5465",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "CF4"
+      ],
+      "component_key": "CF4",
+      "component_aliases": [
+        "carbon tetrafluoride"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/cf4_100.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas cf4, p = 1 atm, t = 293.15 k cf4 carbon tetrafluoride 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ar_93.0-iC4H10_5.0-O2_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ar_93.0-iC4H10_5.0-O2_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ar/iC4H10/O2, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 93
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 5
+        },
+        {
+          "name": "O2",
+          "fraction": 2
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "d6c5207f36985ef15f100d64db77fdde137cec2a08e22af80ac87b70b54f2528",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "iC4H10",
+        "O2"
+      ],
+      "component_key": "Ar + iC4H10 + O2",
+      "component_aliases": [
+        "argon",
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "oxygen"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ar_93.0-ic4h10_5.0-o2_2.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ar/ic4h10/o2, p = 1 atm, t = 293.15 k ar + ic4h10 + o2 argon i-c4h10 isobutane isoc4h10 oxygen 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ar_95.0-iC4H10_5.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ar_95.0-iC4H10_5.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ar/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 95
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 5
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "db69cf0c1464e8a33cab4bc423b50acd9d1d73e88c76a3090cbf3bf24816a15e",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "iC4H10"
+      ],
+      "component_key": "Ar + iC4H10",
+      "component_aliases": [
+        "argon",
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ar_95.0-ic4h10_5.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ar/ic4h10, p = 1 atm, t = 293.15 k ar + ic4h10 argon i-c4h10 isobutane isoc4h10 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ar_97.0-iC4H10_3.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ar_97.0-iC4H10_3.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ar/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 97
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 3
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "c71685aa87862ded7441e37acf2824dcf039e7c4ddef485aa0c35da8aeff54e1",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "iC4H10"
+      ],
+      "component_key": "Ar + iC4H10",
+      "component_aliases": [
+        "argon",
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ar_97.0-ic4h10_3.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ar/ic4h10, p = 1 atm, t = 293.15 k ar + ic4h10 argon i-c4h10 isobutane isoc4h10 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ar_98.0-iC4H10_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ar_98.0-iC4H10_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ar/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 98
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 2
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "612f9edd6b7309cb090c67e18421564db9f266f603dcedf88d57bda8716e0808",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "iC4H10"
+      ],
+      "component_key": "Ar + iC4H10",
+      "component_aliases": [
+        "argon",
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ar_98.0-ic4h10_2.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ar/ic4h10, p = 1 atm, t = 293.15 k ar + ic4h10 argon i-c4h10 isobutane isoc4h10 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ar_99.0-CH4_1.0-E_vs_P_0.1_1000.0_nodes_200-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ar_99.0-CH4_1.0-E_vs_P_0.1_1000.0_nodes_200-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ar/CH4, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 99
+        },
+        {
+          "name": "CH4",
+          "fraction": 1
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 105327,
+      "sha256": "61863369d777a677934cdc9228e70b6fae317a9f2609143d9a1ae6778034778b",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 200,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.000131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "CH4"
+      ],
+      "component_key": "Ar + CH4",
+      "component_aliases": [
+        "argon",
+        "methane"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ar_99.0-ch4_1.0-e_vs_p_0.1_1000.0_nodes_200-ncol_10-maxelectronenergy_400.000000.gas ar/ch4, p = 1 atm, t = 293.15 k ar + ch4 argon methane 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ar_99.0-iC4H10_1.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ar_99.0-iC4H10_1.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ar/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 99
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 1
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "228e093641c759011ce10a47bca95fb7f3b4057e6f5ff0cda0b5619ec9ca3c9d",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "iC4H10"
+      ],
+      "component_key": "Ar + iC4H10",
+      "component_aliases": [
+        "argon",
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ar_99.0-ic4h10_1.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ar/ic4h10, p = 1 atm, t = 293.15 k ar + ic4h10 argon i-c4h10 isobutane isoc4h10 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ar_99.5-iC4H10_0.5-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ar_99.5-iC4H10_0.5-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ar/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ar",
+          "fraction": 99.5
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 0.5
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "b4453ae6f99536a19e5bd9359c81638b0e838a09b7664efe45fce2fa9fdd1aae",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0263157895,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ar",
+        "iC4H10"
+      ],
+      "component_key": "Ar + iC4H10",
+      "component_aliases": [
+        "argon",
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ar_99.5-ic4h10_0.5-e_vs_p_20.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ar/ic4h10, p = 1 atm, t = 293.15 k ar + ic4h10 argon i-c4h10 isobutane isoc4h10 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/he_100.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "he_100.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "He, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "He",
+          "fraction": 100
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "f2655b6b1adf15f86c52ba47d47aad9464e854f14024181ca0546be83224b68d",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "He"
+      ],
+      "component_key": "He",
+      "component_aliases": [
+        "helium"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/he_100.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas he, p = 1 atm, t = 293.15 k he helium 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ne_95.0-iC4H10_5.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ne_95.0-iC4H10_5.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ne/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ne",
+          "fraction": 95
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 5
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "ebb710eab28f4662c99b2a7e78fc1834b4ebf5390a031bb49b55661ef4874dcb",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ne",
+        "iC4H10"
+      ],
+      "component_key": "Ne + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "neon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ne_95.0-ic4h10_5.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ne/ic4h10, p = 1 atm, t = 293.15 k ne + ic4h10 i-c4h10 isobutane isoc4h10 neon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ne_97.0-iC4H10_3.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ne_97.0-iC4H10_3.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ne/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ne",
+          "fraction": 97
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 3
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "cbe74968ffb46c9a996db22114e61d096e0c482b41a228f2901f820725e776a6",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ne",
+        "iC4H10"
+      ],
+      "component_key": "Ne + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "neon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ne_97.0-ic4h10_3.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ne/ic4h10, p = 1 atm, t = 293.15 k ne + ic4h10 i-c4h10 isobutane isoc4h10 neon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ne_98.0-iC4H10_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ne_98.0-iC4H10_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ne/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ne",
+          "fraction": 98
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 2
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "0fefff5e7fb626426d767823a2dd4c5c1330ec2fe2eff463f4a5394d0297ea6f",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ne",
+        "iC4H10"
+      ],
+      "component_key": "Ne + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "neon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ne_98.0-ic4h10_2.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ne/ic4h10, p = 1 atm, t = 293.15 k ne + ic4h10 i-c4h10 isobutane isoc4h10 neon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ne_99.0-iC4H10_1.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ne_99.0-iC4H10_1.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ne/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ne",
+          "fraction": 99
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 1
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "05f796548bef9f2d72f237679005e2dcbb55250961012303dfc64002fd84043e",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ne",
+        "iC4H10"
+      ],
+      "component_key": "Ne + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "neon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ne_99.0-ic4h10_1.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ne/ic4h10, p = 1 atm, t = 293.15 k ne + ic4h10 i-c4h10 isobutane isoc4h10 neon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/ne_99.5-iC4H10_0.5-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "ne_99.5-iC4H10_0.5-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Ne/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Ne",
+          "fraction": 99.5
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 0.5
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "e372c93a157e0cc162b2a84f5e98ec43e9b6c314a6b833d768861980944106e0",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Ne",
+        "iC4H10"
+      ],
+      "component_key": "Ne + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "neon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/ne_99.5-ic4h10_0.5-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas ne/ic4h10, p = 1 atm, t = 293.15 k ne + ic4h10 i-c4h10 isobutane isoc4h10 neon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_100.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_100.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 100
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "356413c2f73e2e058ffb6da51bda031aed3ea1446aa7a811912cbb9a2d6add13",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe"
+      ],
+      "component_key": "Xe",
+      "component_aliases": [
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_100.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe, p = 1 atm, t = 293.15 k xe xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_91.0-n(ch3)3_9.0-E_vs_P_10.0_100000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_91.0-n(ch3)3_9.0-E_vs_P_10.0_100000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 10 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 91
+        },
+        {
+          "name": "TMA",
+          "fraction": 9
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "10 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "5a68e655f9856356e44242d8d4e4383a3163f51901557375e26bf8f92ff077bb",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 131.578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 1013250,
+      "pressure_atm": 10,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_91.0-n(ch3)3_9.0-e_vs_p_10.0_100000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 10 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 10 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_93.0-n(ch3)3_7.0-E_vs_P_10.0_100000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_93.0-n(ch3)3_7.0-E_vs_P_10.0_100000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 10 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 93
+        },
+        {
+          "name": "TMA",
+          "fraction": 7
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "10 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "1b8d49807b64b4e477d2926eb94ca0d05c81f4cc5128eb25b7d1024ea7ef6102",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 131.578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 1013250,
+      "pressure_atm": 10,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_93.0-n(ch3)3_7.0-e_vs_p_10.0_100000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 10 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 10 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_95.0-CF4_5.0-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_95.0-CF4_5.0-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/CF4, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 5
+        },
+        {
+          "name": "CF4",
+          "fraction": 95
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "14f871f37bc95aa4e1503e800ea5a4ba851544ad66ccd4733294421eb03e4e9b",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0263157895,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "CF4"
+      ],
+      "component_key": "Xe + CF4",
+      "component_aliases": [
+        "carbon tetrafluoride",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_95.0-cf4_5.0-e_vs_p_20.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/cf4, p = 1 atm, t = 293.15 k xe + cf4 carbon tetrafluoride xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_95.0-iC4H10_5.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_95.0-iC4H10_5.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 95
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 5
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "a2872f46def0c9a866a75225e506487327d5c99268deb3a2471ccff78e7ed6a7",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "iC4H10"
+      ],
+      "component_key": "Xe + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_95.0-ic4h10_5.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/ic4h10, p = 1 atm, t = 293.15 k xe + ic4h10 i-c4h10 isobutane isoc4h10 xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_95.0-n(ch3)3_5.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_95.0-n(ch3)3_5.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 95
+        },
+        {
+          "name": "TMA",
+          "fraction": 5
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "c54abafeba1270e2a7861450c38b3cc7dc1ea8e5958ca55aef5160df6ba430fd",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_95.0-n(ch3)3_5.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 1 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_97.0-CF4_3.0-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_97.0-CF4_3.0-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/CF4, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 3
+        },
+        {
+          "name": "CF4",
+          "fraction": 97
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "7c8a687800feb5099e0e32ae7f2bb3654aa20cbe3ac5b35d1f066c52894fb2a9",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0263157895,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "CF4"
+      ],
+      "component_key": "Xe + CF4",
+      "component_aliases": [
+        "carbon tetrafluoride",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_97.0-cf4_3.0-e_vs_p_20.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/cf4, p = 1 atm, t = 293.15 k xe + cf4 carbon tetrafluoride xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_97.0-iC4H10_3.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_97.0-iC4H10_3.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 97
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 3
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "50ee448cec7ba974cde5d21534e61f65d12383b12680fa087633d51ae67c8656",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "iC4H10"
+      ],
+      "component_key": "Xe + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_97.0-ic4h10_3.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/ic4h10, p = 1 atm, t = 293.15 k xe + ic4h10 i-c4h10 isobutane isoc4h10 xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_97.0-n(ch3)3_3.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_97.0-n(ch3)3_3.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 97
+        },
+        {
+          "name": "TMA",
+          "fraction": 3
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "c96885c7a3e6977575a20c49bc6312084dc320fe0e721594adcb4dd6dcf53da9",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_97.0-n(ch3)3_3.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 1 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_97.0-n(ch3)3_3.0-E_vs_P_10.0_100000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_97.0-n(ch3)3_3.0-E_vs_P_10.0_100000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 10 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 97
+        },
+        {
+          "name": "TMA",
+          "fraction": 3
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "10 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "78f8c5a1ff52da3088b38f694f750bbc91c8426b008a1a45c49637fc2dbc3e35",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 131.578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 1013250,
+      "pressure_atm": 10,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_97.0-n(ch3)3_3.0-e_vs_p_10.0_100000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 10 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 10 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_97.8-n(ch3)3_2.2-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_97.8-n(ch3)3_2.2-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 97.8
+        },
+        {
+          "name": "TMA",
+          "fraction": 2.2
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "0d8e45c3cf89bcd0d240b582e51ee7043837ed7a84ade95122fe350961096a70",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_97.8-n(ch3)3_2.2-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 1 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_98.0-CF4_2.0-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_98.0-CF4_2.0-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/CF4, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 2
+        },
+        {
+          "name": "CF4",
+          "fraction": 98
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "f9af6e2745937f3d0de50ead929e7ddceb5967af26ab7f751887948903efe99d",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0263157895,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "CF4"
+      ],
+      "component_key": "Xe + CF4",
+      "component_aliases": [
+        "carbon tetrafluoride",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_98.0-cf4_2.0-e_vs_p_20.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/cf4, p = 1 atm, t = 293.15 k xe + cf4 carbon tetrafluoride xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_98.0-iC4H10_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_98.0-iC4H10_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 98
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 2
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "dd3f1344e495ff6611d055455bd287c79438eb3f03a8bb1c29176bb6b97de1c1",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "iC4H10"
+      ],
+      "component_key": "Xe + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_98.0-ic4h10_2.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/ic4h10, p = 1 atm, t = 293.15 k xe + ic4h10 i-c4h10 isobutane isoc4h10 xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_98.0-n(ch3)3_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_98.0-n(ch3)3_2.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 98
+        },
+        {
+          "name": "TMA",
+          "fraction": 2
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "b3f7af973bf62a8b7d4bbc901f24e45a55b4dfae1d6f75b4a06b31b5ac5eb2c5",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_98.0-n(ch3)3_2.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 1 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_99.0-CF4_1.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_99.0-CF4_1.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/CF4, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 1
+        },
+        {
+          "name": "CF4",
+          "fraction": 99
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "24c2521a22c27ba100efb74941d857fed25936ce9bc7760e9b20eabedd036ff4",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "CF4"
+      ],
+      "component_key": "Xe + CF4",
+      "component_aliases": [
+        "carbon tetrafluoride",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_99.0-cf4_1.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/cf4, p = 1 atm, t = 293.15 k xe + cf4 carbon tetrafluoride xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_99.0-iC4H10_1.0-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_99.0-iC4H10_1.0-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 99
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 1
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "28f35f65f3ecc0c30e4ab2d70353160f01eea0ecdcbb9f0240ba2cd83604e8b2",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0263157895,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "iC4H10"
+      ],
+      "component_key": "Xe + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_99.0-ic4h10_1.0-e_vs_p_20.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/ic4h10, p = 1 atm, t = 293.15 k xe + ic4h10 i-c4h10 isobutane isoc4h10 xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_99.0-n(ch3)3_1.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_99.0-n(ch3)3_1.0-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 99
+        },
+        {
+          "name": "TMA",
+          "fraction": 1
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "6b95463f5d6aa3f21ac6d21d02678b8fceda02c1cba7f1a41ab68e7e27ba811a",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_99.0-n(ch3)3_1.0-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 1 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_99.0-n(ch3)3_1.0-E_vs_P_10.0_100000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_99.0-n(ch3)3_1.0-E_vs_P_10.0_100000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 10 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 99
+        },
+        {
+          "name": "TMA",
+          "fraction": 1
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "10 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "9fc16e8aef98166084273ef2e2dcddb8f9eecb0010023427771f060e26689bdf",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 131.578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 1013250,
+      "pressure_atm": 10,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_99.0-n(ch3)3_1.0-e_vs_p_10.0_100000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 10 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 10 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_99.5-CF4_0.5-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_99.5-CF4_0.5-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/CF4, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 0.5
+        },
+        {
+          "name": "CF4",
+          "fraction": 99.5
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "3e875fcf07a628d28d759ebe0451e7841cc18a3314c79cb7ddcac17533705aa8",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0263157895,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "CF4"
+      ],
+      "component_key": "Xe + CF4",
+      "component_aliases": [
+        "carbon tetrafluoride",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_99.5-cf4_0.5-e_vs_p_20.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/cf4, p = 1 atm, t = 293.15 k xe + cf4 carbon tetrafluoride xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_99.5-iC4H10_0.5-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_99.5-iC4H10_0.5-E_vs_P_20.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/iC4H10, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 99.5
+        },
+        {
+          "name": "iC4H10",
+          "fraction": 0.5
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "3e0a7fa85ef37ca8d11c3d968faa3a09d3498124165119ac7e8fdeb5fcc10207",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0263157895,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "iC4H10"
+      ],
+      "component_key": "Xe + iC4H10",
+      "component_aliases": [
+        "i-c4h10",
+        "isobutane",
+        "isoc4h10",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_99.5-ic4h10_0.5-e_vs_p_20.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/ic4h10, p = 1 atm, t = 293.15 k xe + ic4h10 i-c4h10 isobutane isoc4h10 xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_99.5-n(ch3)3_0.5-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_99.5-n(ch3)3_0.5-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 99.5
+        },
+        {
+          "name": "TMA",
+          "fraction": 0.5
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "5917d673129a8335a59ad711c13a78671dde55fbb7684cddc48372fe19fe8162",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_99.5-n(ch3)3_0.5-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 1 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 1 atm"
+    },
+    {
+      "path": "GasFile/github_nkx111_gasFiles/xe_99.9-n(ch3)3_0.1-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "file_name": "xe_99.9-n(ch3)3_0.1-E_vs_P_10.0_1000.0_nodes_20-nCol_10-maxElectronEnergy_400.000000.gas",
+      "directory": "GasFile/github_nkx111_gasFiles",
+      "identifier": "Xe/TMA, p = 1 atm, T = 293.15 K",
+      "components": [
+        {
+          "name": "Xe",
+          "fraction": 99.9
+        },
+        {
+          "name": "TMA",
+          "fraction": 0.1
+        }
+      ],
+      "temperature": "293.15 K",
+      "pressure": "1 atm",
+      "source": "identifier_mixture",
+      "size_bytes": 12591,
+      "sha256": "91283935a54434cebe7fb3e2e170ea0dd2ac3c60fbf092097b90a750a1d11050",
+      "coverage": {
+        "format_version": 12,
+        "map_2d": false,
+        "gasok_bits": "TFTTFTFTTTFFFFFFFFFF",
+        "dimensions": {
+          "electric_field_count": 20,
+          "angle_count": 1,
+          "magnetic_field_count": 1,
+          "excitation_count": 0,
+          "ionisation_count": 0
+        },
+        "e_over_p_v_cm_torr": {
+          "min": 0.0131578947,
+          "max": 1.31578947
+        },
+        "angle_rad": {
+          "min": 1.57079633,
+          "max": 1.57079633
+        },
+        "magnetic_field_t": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "component_names": [
+        "Xe",
+        "TMA"
+      ],
+      "component_key": "Xe + TMA",
+      "component_aliases": [
+        "n(ch3)3",
+        "trimethylamine",
+        "xenon"
+      ],
+      "temperature_k": 293.15,
+      "pressure_pa": 101325,
+      "pressure_atm": 1,
+      "composition_sum_pct": 100,
+      "quality_flags": [],
+      "data_quality": "ok",
+      "match_ready": true,
+      "parse_status": "ok",
+      "search_text": "gasfile/github_nkx111_gasfiles/xe_99.9-n(ch3)3_0.1-e_vs_p_10.0_1000.0_nodes_20-ncol_10-maxelectronenergy_400.000000.gas xe/tma, p = 1 atm, t = 293.15 k xe + tma n(ch3)3 trimethylamine xenon 293.15 k 1 atm"
     }
   ]
 }

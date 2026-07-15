@@ -6,7 +6,7 @@
 
 This guide is for maintainers and extension developers. It explains the GasFile_Viewer architecture, data flow, index format, matching algorithm, workbench parser and plotting pipeline, persistence, security boundaries, tests, and deployment. It describes modules and key function groups rather than restating every line of syntax.
 
-The documented baseline is the repository state on 2026-07-14:
+The documented baseline is the repository state on 2026-07-15:
 
 - Search index: schema v3.
 - Complete workbench project format: version 2.
@@ -31,7 +31,7 @@ For operation, see the [English Workbench User Manual](Garfield_gas_workbench_pr
 - **Static site:** simple deployment, no application server, and local-file operation; the page cannot write directly to GitHub or persist an index on a server.
 - **Prebuilt index:** the browser avoids downloading hundreds of files for every search; the index must be rebuilt after data changes.
 - **Content first, path fallback:** irregular names remain searchable; unknown fractions are reported instead of guessed.
-- **Native front end:** the workbench is easy to distribute as a page; the two localized pages contain substantial parallel code and require disciplined synchronization.
+- **Native front end:** the workbench is easy to distribute as static files. Both localized pages share one parser, while their remaining UI and plotting code still requires disciplined synchronization.
 - **Client-side physical conversions:** raw files remain unchanged and sources are inspectable; conversion rules require clear documentation and regression tests.
 
 ## 3. System Architecture
@@ -48,6 +48,7 @@ flowchart LR
     I[gas-search-core.js] --> G
     I --> H
     H --> J[Chinese and English Pro workbenches]
+    O[gas-file-parser.js] --> J
     K[Local .gas files] --> J
     J --> L[SVG/PNG/PDF/CSV/HTML/project JSON]
     M[GitHub Actions] --> B
@@ -353,7 +354,7 @@ Files:
 - `garfield_gas_workbench_pro.html`: Chinese.
 - `garfield_gas_workbench_pro_english.html`: English.
 
-Each is a self-contained application: HTML defines controls, CSS defines layout, and inline JavaScript handles parsing, state, plots, analysis, and export. The shared search core and repository library load at the end.
+Each HTML file defines controls and layout, while inline JavaScript handles state, plots, analysis, and export. Both pages load `gas-file-parser.js` before their localized wrapper and load the shared search core and repository library at the end.
 
 ### 8.1 Runtime state
 
@@ -370,7 +371,9 @@ A gas entry combines immutable parsed data with color, line and marker style, op
 
 ## 9. Garfield Parsing in the Workbench
 
-Key functions: `parseGasFile`, `parseLevels`, `nums`, and `section`.
+File: `gas-file-parser.js`
+
+The module exports `GarfieldGasParser.parse` in browsers and `module.exports` in Node. The localized pages keep only a small `parseGasFile` wrapper that supplies translated error messages and the missing-Identifier label. Internal helpers include `parseLevels`, `numbers`, and `section`.
 
 ### 9.1 File sections
 
@@ -399,7 +402,7 @@ Otherwise the record contains multiple value/error pairs:
 33 + 2 * (nExc + nIon)
 ```
 
-Numeric parsing accepts Fortran `D` exponents. Incomplete grids or too few values are fatal. Extra values are reported in integrity metadata instead of changing dimensions silently.
+Numeric parsing accepts Fortran `D` exponents. Incomplete grids or too few values are fatal. If the table contains an equal number of extension values after every base record, the parser advances by the actual per-record size, stores those values in `extensionValues`, and exposes `extraValuesPerRecord`. A remainder that cannot be divided evenly across records is rejected instead of risking shifted scientific data.
 
 ### 9.3 Conditions and number density
 
@@ -587,9 +590,13 @@ Maintain it for established workflows and reproduction. New search, analysis, an
 
 ### 15.2 Static web contract tests
 
-`tests/test_web_integration.py` does not launch a browser. It checks source contracts for localized workbenches and bridges, path and origin restrictions, SHA-256, the 200 MiB guard, cancellation, parametric X controls and E/p alignment, X errors, CSV fields, shared-core use, and both workbench links.
+`tests/test_web_integration.py` does not launch a browser. It checks source contracts for localized workbenches and bridges, shared-parser loading, path and origin restrictions, SHA-256, the 200 MiB guard, cancellation, parametric X controls and E/p alignment, X errors, CSV fields, shared-core use, and both workbench links.
 
-### 15.3 Test boundary
+### 15.3 Shared parser regression
+
+`tests/test-gas-file-parser.js` runs in Node and parses every gas file in `GasFile/`. It verifies the declared grid count, total record consumption, regular records, and an extended-record fixture whose later records previously became misaligned.
+
+### 15.4 Test boundary
 
 The current suite does not replace browser end-to-end checks. High-risk changes should also verify file drag-and-drop, nonblank responsive SVG output, cancellation and hash failure, project round trips, and all figure/data export formats.
 
@@ -605,7 +612,7 @@ The path list includes `Doc/**`, so an independent user-manual or developer-guid
 
 ### 16.2 Jobs
 
-`validate-and-build` checks out the repository, configures Python 3.11, runs all unittest cases, rebuilds the pretty index, verifies it with `--check`, and uploads the whole repository as a Pages artifact for non-pull-request events.
+`validate-and-build` checks out the repository, configures Python 3.11, runs the Python unittests and Node shared-parser regression, rebuilds the pretty index, verifies it with `--check`, and uploads the whole repository as a Pages artifact for non-pull-request events.
 
 `deploy` runs only outside pull requests and publishes through the GitHub Pages environment. The `gas-search-pages` concurrency group cancels an older in-progress run so stale content cannot deploy after a newer commit.
 
@@ -692,6 +699,7 @@ Open `/gas_file_search.html` and both Pro workbenches through HTTP. Verify at le
 ```bash
 python3 tools/build_gas_index.py --check
 python3 -m unittest discover -s tests -v
+node tests/test-gas-file-parser.js
 git diff --check
 git status --short
 ```
@@ -700,10 +708,11 @@ After pushing, confirm `Gas search validation and Pages deployment` succeeds and
 
 ## 21. Recommended Refactoring Order
 
-1. Extract common Pro workbench JavaScript so localized pages differ primarily in text.
-2. Add deterministic numerical unit tests for `GasSearchCore.evaluate` that run in Node or a browser harness.
-3. Extract the Garfield parser and cover minimal real fixtures for 2D/non-2D records, errors, excitation, and ionization.
-4. Add browser end-to-end coverage for load, repository insertion, plotting, and project round trips.
-5. Publish machine-readable JSON Schemas for the search index and project format.
+The Garfield parser is now shared and covered against all repository gas files. Recommended next steps are:
 
-Perform these steps incrementally and lock current behavior with tests before moving code. Module extraction should not simultaneously alter physical conversions or scientific output.
+1. Extract remaining common Pro workbench UI and plotting JavaScript so localized pages differ primarily in text.
+2. Add deterministic numerical unit tests for `GasSearchCore.evaluate` that run in Node or a browser harness.
+3. Add browser end-to-end coverage for load, repository insertion, plotting, and project round trips.
+4. Publish machine-readable JSON Schemas for the search index and project format.
+
+Perform these steps incrementally and lock current behavior with tests before moving code. Parser changes must continue to run against the complete repository collection.

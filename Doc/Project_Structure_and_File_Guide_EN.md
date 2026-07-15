@@ -6,7 +6,7 @@
 
 This short guide gives new users and maintainers a map of the repository, the purpose of each major file, ownership boundaries, and the correct file to change for common tasks. For algorithms, data structures, and key functions, read the [Code Design and Implementation Guide](Code_Design_and_Implementation_EN.md). For workbench operation, read the [English User Manual](Garfield_gas_workbench_pro_User_Manual_EN.md).
 
-This document describes the project structure as of 2026-07-14. The search index uses schema v3.
+This document describes the project structure as of 2026-07-15. The search index uses schema v3.
 
 ## 2. Project Overview
 
@@ -35,6 +35,7 @@ GasFile_Viewer/
 ├── README.zh-CN.md
 ├── gas_file_search.html
 ├── gas-search-core.js
+├── gas-file-parser.js
 ├── workbench-library.js
 ├── garfield_gas_workbench_pro.html
 ├── garfield_gas_workbench_pro_english.html
@@ -49,6 +50,7 @@ GasFile_Viewer/
 │   └── build_gas_index.py
 ├── tests/
 │   ├── test_build_gas_index.py
+│   ├── test-gas-file-parser.js
 │   └── test_web_integration.py
 ├── Doc/
 │   ├── localized workbench manuals and PDFs
@@ -67,8 +69,9 @@ GasFile_Viewer/
 | `QUICK_START.md` | Maintained documentation | Root-level bilingual click-and-use instructions for occasional or one-time users. | Keep it minimal: online entry points and essential cautions only. |
 | `gas_file_search.html` | Maintained source | Standalone English search page. It loads the index; searches by components, fractions, temperature, pressure, quality, and text; sorts results; creates share URLs; exports CSV; and links to both workbenches. | Edit for query UI or result presentation. Put matching-rule changes in the shared core. |
 | `gas-search-core.js` | Maintained source | Shared unit conversion, matching, scoring, and sorting logic used by both search interfaces. | Add tests for every matching-rule change and verify both consumers. |
+| `gas-file-parser.js` | Maintained source | Shared Garfield gas-table parser and physical conversions used by both localized Pro workbenches. It preserves per-record extension values without shifting later records. | Keep format handling language-neutral; localize only wrapper error messages in the HTML pages. |
 | `workbench-library.js` | Maintained source | Injects the repository search dialog into both workbenches and handles index loading, safe downloads, hash verification, deduplication, and batch insertion. | Edit for repository integration, security controls, or batch loading. |
-| `garfield_gas_workbench_pro.html` | Maintained source | Chinese workbench with `.gas` parsing, file management, comparison plots, analysis, fitting, heat maps, export, and project persistence. | Keep functionality and element IDs synchronized with the English file. |
+| `garfield_gas_workbench_pro.html` | Maintained source | Chinese workbench with localized parser messages, file management, comparison plots, analysis, fitting, heat maps, export, and project persistence. | Keep functionality and element IDs synchronized with the English file. |
 | `garfield_gas_workbench_pro_english.html` | Maintained source | English workbench with the same intended feature set as the Chinese workbench. | Functional changes must also be applied to the Chinese version. |
 | `garfield_gas_multi_file_viewer_advanced_legend.html` | Maintained/compatibility source | Earlier Chinese multi-file viewer with parsing, comparison, legend controls, interaction, and export, but without the complete analysis and repository integration of the current workbench. | Retain for compatibility; normally add new features to the `pro` workbenches. |
 | `README.md` | Maintained documentation | English project landing page, online entry points, user workflows, and instructions for adding gas files. | Update when user-visible behavior changes. |
@@ -94,6 +97,7 @@ The collection is intentionally not enumerated file by file in this guide. Every
 |---|---|---|
 | `tools/build_gas_index.py` | Maintained source | Scans `GasFile/`, parses content and path fallbacks, applies aliases and overrides, writes the index and report, and detects a stale committed index. |
 | `tests/test_build_gas_index.py` | Maintained source | Covers condition units, `Identifier:` parsing, quality flags, transport coverage, and the index lifecycle. |
+| `tests/test-gas-file-parser.js` | Maintained source | Parses every repository gas file with the shared module and locks record alignment for regular and extended layouts. |
 | `tests/test_web_integration.py` | Maintained source | Checks static integration contracts for both workbenches, shared scripts, security controls, parametric X axes, and localized workbench links. |
 | `.github/workflows/gas-search.yml` | Maintained configuration | On selected pushes, pull requests, or manual runs, tests the project, rebuilds and verifies the index, and deploys the repository to GitHub Pages. |
 | `.gitignore` | Maintained configuration | Excludes Python caches and compiled artifacts from version control. |
@@ -118,6 +122,7 @@ The collection is intentionally not enumerated file by file in this guide. Every
 | Add a component alias | `GasFile/gas_aliases.json` | Rebuild and verify search behavior. |
 | Correct exceptional metadata | `GasFile/gas_metadata_override.json` | Rebuild and confirm `source=manual_override`. |
 | Change matching scores | `gas-search-core.js` | Test both standalone and integrated search. |
+| Change Garfield table parsing | `gas-file-parser.js` | Run the Node parser regression over every repository gas file and verify both localized wrappers. |
 | Change standalone search UI | `gas_file_search.html` | Check share URLs, CSV, mobile layout, and workbench links. |
 | Change workbench functionality | Both `garfield_gas_workbench_pro*.html` files | Keep IDs, project format, and localized behavior aligned. |
 | Change repository integration | `workbench-library.js` | Check path validation, hashes, deduplication, cancellation, and batch loading. |
@@ -130,7 +135,7 @@ The collection is intentionally not enumerated file by file in this guide. Every
 - The Pages workflow rebuilds the index in its temporary runner but does not create a bot commit.
 - A local clone must run the builder before its committed index reflects newly added files.
 - The current Actions workflow does not regenerate PDFs. Decide explicitly whether a manual PDF refresh is needed after Markdown manual changes.
-- The localized `pro` workbenches contain substantial parallel code and must be changed together. Shared search behavior belongs in `gas-search-core.js` to avoid duplication.
+- The localized `pro` workbenches still contain parallel UI and plotting code, but both use `gas-file-parser.js` for identical Garfield parsing and physical conversions.
 
 ## 10. Minimum Maintenance Check
 
@@ -138,6 +143,7 @@ The collection is intentionally not enumerated file by file in this guide. Every
 python3 tools/build_gas_index.py --pretty
 python3 tools/build_gas_index.py --check
 python3 -m unittest discover -s tests -v
+node tests/test-gas-file-parser.js
 git diff --check
 ```
 

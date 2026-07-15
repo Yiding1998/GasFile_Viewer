@@ -30,8 +30,8 @@ SKIP_NAMES = {
 SKIP_SUFFIXES = {".md", ".pdf"}
 TEXT_READ_LIMIT = 256 * 1024
 IDENTIFIER_RE = re.compile(r"^\s*Identifier\s*:\s*(.*?)\s*$", re.IGNORECASE | re.MULTILINE)
-TEMP_RE = re.compile(r"\bT\s*=\s*([^,]+?)(?=\s*,\s*p\s*=|\s*$)", re.IGNORECASE)
-PRESSURE_RE = re.compile(r"\bp\s*=\s*([^,]+?)\s*$", re.IGNORECASE)
+TEMP_RE = re.compile(r"\bT\s*=\s*([^,]+)", re.IGNORECASE)
+PRESSURE_RE = re.compile(r"\bp\s*=\s*([^,]+)", re.IGNORECASE)
 COMPONENT_RE = re.compile(r"^\s*(.+?)\s+([+-]?\d+(?:\.\d+)?)\s*%\s*$")
 ATOM_RE = re.compile(r"[A-Za-z][A-Za-z0-9]*")
 QUANTITY_RE = re.compile(
@@ -54,6 +54,10 @@ DIMENSION_RE = re.compile(
 )
 VERSION_RE = re.compile(r"^\s*Version\s*:\s*(\d+)", re.IGNORECASE | re.MULTILINE)
 GASOK_RE = re.compile(r"^\s*GASOK\s+bits\s*:\s*([TF]+)", re.IGNORECASE | re.MULTILINE)
+MIXTURE_RE = re.compile(
+    r"\bMixture\s*:\s*(.*?)(?=^\s*(?:Excitation|Ionisation|The gas tables follow:))",
+    re.IGNORECASE | re.MULTILINE | re.DOTALL,
+)
 
 PRESSURE_FACTORS_PA = {
     "pa": 1.0,
@@ -246,12 +250,32 @@ def parse_identifier(text: str, alias_to_canonical: dict[str, str]) -> dict[str,
             "fraction": compact_number(float(component_match.group(2))),
         })
         seen.add(name.lower())
+
+    source = "identifier" if components else ""
+    if not components:
+        mixture_match = MIXTURE_RE.search(text)
+        fractions = [
+            compact_number(value)
+            for value in parse_float_tokens(mixture_match.group(1) if mixture_match else "")
+            if not math.isclose(value, 0.0, abs_tol=1e-12)
+        ]
+        names = [
+            normalize_name(part, alias_to_canonical)
+            for part in composition_text.split("/")
+            if part.strip()
+        ]
+        if names and len(names) == len(fractions):
+            components = [
+                {"name": name, "fraction": fraction}
+                for name, fraction in zip(names, fractions)
+            ]
+            source = "identifier_mixture"
     return {
         "identifier": identifier,
         "components": components,
         "temperature": temperature,
         "pressure": pressure,
-        "source": "identifier" if components else "",
+        "source": source,
     }
 
 
@@ -375,7 +399,7 @@ def finalize_record(
     source = record.get("source", "")
     if source == "read_error":
         record["parse_status"] = "error"
-    elif source in {"manual_override", "identifier"} and record["components"]:
+    elif source in {"manual_override", "identifier", "identifier_mixture"} and record["components"]:
         record["parse_status"] = "ok"
     elif record["components"]:
         record["parse_status"] = "fallback"

@@ -8,6 +8,7 @@ on:
       - "tools/build_gas_index.py"
       - "gas_file_search.html"
       - "gas-search-core.js"
+      - "gas-file-parser.js"
       - "workbench-library.js"
       - "garfield_gas_workbench_pro.html"
       - "garfield_gas_workbench_pro_english.html"
@@ -22,6 +23,7 @@ on:
       - "tools/build_gas_index.py"
       - "gas_file_search.html"
       - "gas-search-core.js"
+      - "gas-file-parser.js"
       - "workbench-library.js"
       - "garfield_gas_workbench_pro.html"
       - "garfield_gas_workbench_pro_english.html"
@@ -49,6 +51,8 @@ jobs:
           python-version: "3.11"
       - name: Test index builder
         run: python3 -m unittest discover -s tests -v
+      - name: Test shared gas parser against repository files
+        run: node tests/test-gas-file-parser.js
       - name: Build deployment index from gas files
         run: python3 tools/build_gas_index.py --pretty
       - name: Verify generated index

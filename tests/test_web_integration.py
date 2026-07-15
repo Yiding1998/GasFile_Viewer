@@ -20,9 +20,21 @@ class WorkbenchLibraryContractTests(unittest.TestCase):
             self.assertIn("window.GarfieldWorkbenchBridge", html)
             self.assertIn('src="gas-search-core.js"', html)
             self.assertIn('src="workbench-library.js"', html)
+            self.assertIn('src="gas-file-parser.js"', html)
+            self.assertIn("GarfieldGasParser.parse", html)
+            self.assertNotIn("function parseLevels", html)
+            self.assertNotIn("const FLOAT_RE", html)
             self.assertIn("sourceSha256", html)
             self.assertIn("sourcePath", html)
             self.assertIn("file.arrayBuffer()", html)
+
+    def test_shared_parser_supports_record_extensions(self) -> None:
+        script = self.read("gas-file-parser.js")
+        self.assertIn("root.GarfieldGasParser=api", script)
+        self.assertIn("module.exports=api", script)
+        self.assertIn("extraValuesPerRecord=extraValues/recordCount", script)
+        self.assertIn("q=recordStart+actualRecordSize", script)
+        self.assertIn("extensionValues", script)
 
     def test_library_limits_remote_paths_and_verifies_content(self) -> None:
         script = self.read("workbench-library.js")

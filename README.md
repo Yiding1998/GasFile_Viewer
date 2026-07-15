@@ -38,7 +38,7 @@ The X-axis selector includes the three field coordinates and every built-in or u
 
 Tooltips, synchronized readout, and CSV exports retain the source E, E/p, E/N, magnetic field, and angle for every point. Horizontal parameter uncertainty bars are available when the selected X parameter has uncertainty data. Plot templates and complete project files preserve the X parameter, point order, and uncertainty settings.
 
-For offline use, download [garfield_gas_workbench_pro_english.html](garfield_gas_workbench_pro_english.html) and open it directly in a modern browser. Local file loading, plotting, analysis, and project operations remain available; repository search requires GitHub Pages or a local web server that also serves the repository files.
+For offline use, keep [garfield_gas_workbench_pro_english.html](garfield_gas_workbench_pro_english.html) and [gas-file-parser.js](gas-file-parser.js) in the same directory, then open the HTML file in a modern browser. Local file loading, plotting, analysis, and project operations remain available; repository search requires GitHub Pages or a local web server that also serves the repository files.
 
 ## User Manuals
 

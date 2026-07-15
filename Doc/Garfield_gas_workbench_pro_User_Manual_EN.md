@@ -2,7 +2,7 @@
 title: "Garfield++ Gas Transport Parameter Scientific Plotting and Analysis Workbench"
 subtitle: "User Manual - English Edition"
 author: "For garfield_gas_workbench_pro_english.html"
-date: "2026-07-14"
+date: "2026-07-15"
 lang: en-US
 ---
 
@@ -33,13 +33,13 @@ No installation of Garfield++, ROOT, Python, or a web server is required. Gas fi
 
 Use a recent version of Google Chrome, Microsoft Edge, or Mozilla Firefox. A desktop browser with a screen width of at least 1280 px is recommended.
 
-Because the application is a single HTML file, it can be opened by double-clicking it. If the browser restricts local storage, plotting templates may not be saved permanently. The **Save Full Project** function can still be used in that case.
+For local use, keep `garfield_gas_workbench_pro_english.html` and `gas-file-parser.js` in the same directory, then open the HTML file directly. If the browser restricts local storage, plotting templates may not be saved permanently. The **Save Full Project** function can still be used in that case.
 
 # 2. Quick Start
 
 ## 2.1 Minimal Workflow
 
-1. Open the [English workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html), or open `garfield_gas_workbench_pro_english.html` locally.
+1. Open the [English workbench](https://yiding1998.github.io/GasFile_Viewer/garfield_gas_workbench_pro_english.html), or open `garfield_gas_workbench_pro_english.html` locally with `gas-file-parser.js` beside it.
 2. Drag one or more `.gas` files into the upload area, or click **Add Files**.
 3. In **Main Plot Settings - Data and Comparison**, select the X variable and the left Y parameter.
 4. In the loaded-file list, enable the curves to display and adjust their order, color, line style, and marker style.
@@ -1174,6 +1174,6 @@ This manual was prepared for:
 garfield_gas_workbench_pro_english.html
 ```
 
-English manual date: 2026-07-14.
+English manual date: 2026-07-15.
 
 If the web application is modified later, update the control names, conversion formulas, and listed limitations in this manual accordingly.
